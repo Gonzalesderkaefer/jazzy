@@ -74,7 +74,8 @@ static const char *bin_dest = ".local/bin/";
 /// These files will be created by the installer
 static const Customized custom_files[] = {
    {.path = ".customenv", .content = "", .permission = 0644},
-   {.path = ".customized.sh", .content = customized_sh, .permission = 0644}
+   {.path = ".customized.sh", .content = customized_sh, .permission = 0644},
+   {.path = NULL, .content = NULL, .permission = 0}, // The 'NULL terminator'
 };
 
 
