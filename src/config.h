@@ -1,5 +1,10 @@
+#ifndef CONFIG_H
+#define CONFIG_H
 // Libraries
 #include "types/customized.c"
+#include "types/distro.c"
+#include "packages.h"
+#include <stdlib.h>
 #include <stddef.h>
 
 /// # Config file for jazzy
@@ -80,11 +85,32 @@ static const Customized custom_files[] = {
 
 
 
+/// ## Distros
+/// These are possible distros
+
+static const Distro debian = {
+    .install = (const char*[]){"sudo", "apt", "install", "-y", NULL},
+    .upgrade = (const char*[]){"sudo", "apt", "upgrade", "-y", NULL},
+    .update = (const char*[]){"sudo", "apt", "update", "-y", NULL},
+    .basepkg = debian_base, // This is from packages.h
+    .suffix = NULL,
+};
 
 
+static const Distro fedora = {
+    .install = (const char*[]){"sudo", "dnf", "install", "-y", NULL},
+    .upgrade = NULL,
+    .update = (const char*[]){"sudo", "dnf", "update", "-y", NULL},
+    .basepkg = fedora_base, // This is from packages.h
+    .suffix = NULL,
+};
 
+static const Distro arch = {
+    .install = (const char*[]){"sudo", "pacman", "-S", NULL},
+    .update = (const char*[]){"sudo", "pacman", "-Syu", "--noconfirm", "--needed", NULL},
+    .update = NULL,
+    .suffix = (const char*[]){"--noconfirm", "--needed", NULL},
+    .basepkg = arch_base, // This is from packages.h
+};
 
-
-
-
-
+#endif // CONFIG_H
