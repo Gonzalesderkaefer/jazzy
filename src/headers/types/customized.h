@@ -1,15 +1,20 @@
+#ifndef CUSTOMIZED_H
+#define CUSTOMIZED_H
 // Libraries
 #include <sys/types.h>
 
-/// # Customized 
+
+/// Customized
 /// This struct exists, so that the customized 
 /// files can be easily declared in config.h
 /// There's no other use for this (so far)
-typedef struct {
+typedef struct _Customized {
     const char *path;
     const char *content;
     const mode_t permission;
+
 } Customized;
+
 
 /// This function creates a customized
 /// file where `path` is the absolute filepath
@@ -22,5 +27,7 @@ typedef struct {
 /// the VCS but are still in those repos
 /// if the user decides to e.g symlink the 
 /// config directories from the repo.
-void create_customized(const char *path, const char *content, const mode_t perm) {
-}
+void create_customized(const char *path, const char *content, const mode_t perm);
+
+
+#endif // CUSTOMIZED_H

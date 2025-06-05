@@ -1,7 +1,55 @@
-# Variables
-# Compiler stuff
-CC=gcc
-CFLAGS= -Wall  -Werror -std=c99 -D_XOPEN_SOURCE=500 -D_DEFAULT_SOURCE -Wno-unused-variable -Wno-unused-function
+# Compiler
+CC := gcc
 
-default:
-	${CC} ${CFLAGS} src/main.c -o main.out
+# C-Compiler flags
+CFLAGS := -Wall -Werror
+
+# Source directory
+SRCDIR := src
+
+# This is for static libraries and other binaries
+BUILDDIR := build
+
+# Here are the used header files
+HEADDIR := src/headers
+
+# This is where the header file and compiled libraries will land
+TARGETDIR := target
+
+# This is where executables will land
+RUNDIR := run
+
+# Test directory
+TESTDIR := test
+
+# Other libraries we intend to use in our code
+LIBRARIES := lib
+
+# These are all directories
+DIRS := $(SRCDIR) $(BUILDDIR) $(HEADDIR) $(TARGETDIR) $(RUNDIR) $(TESTDIR) $(LIBRARIES)
+
+# Source files
+SRCFILES := $(wildcard src/*.c)
+
+# Addional Object files
+AOBJFILES := $(BUILDDIR)/fileutils.o
+
+# Object files
+OBJFILES := $(patsubst $(SRCDIR)/%.c, $(BUILDDIR)/%.o, $(SRCFILES)) $(AOBJFILES)
+
+# This is the header file that will be provided provided
+HEADER :=
+
+test: $(OBJFILES) $(BUILDDIR)/test.o
+	$(CC) $(CFLAGS) $^ -o $(RUNDIR)/test.out
+
+# Target for test file
+$(BUILDDIR)/test.o: $(TESTDIR)/test.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+
+# Target for Build files
+$(BUILDDIR)/%.o: $(SRCDIR)/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+
