@@ -1,17 +1,30 @@
+# C Compiler
 CC := gcc
-SRCDIR := src
-BUILDDIR := build
-SRCEXT := c
-SOURCES := $(shell find $(SRCDIR) -type f -name *.c)
-OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.c=.o))
-HEADERS := $(SOURCES:.c=.h)
+
+# Compiler Flags
 CFLAGS :=
+
+# Source directory
+SRCDIR := src
+
+# Builds go here
+BUILDDIR := build
+
+# Get all source files
+SOURCES := $(shell find $(SRCDIR) -type f -name *.c)
+
+# Derive Object files from source files
+OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.c=.o))
+
+# Derive Header files from source files
+HEADERS := $(SOURCES:.c=.h)
+
+
 
 default: $(OBJECTS)
 	@echo "Linking jazzy.out"
 	$(CC) $^ -o jazzy.out
 
-	
 
 
 # Custom recipe for main.c
@@ -20,6 +33,8 @@ $(BUILDDIR)/main.o: $(SRCDIR)/main.c
 	@mkdir -p $(shell dirname $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+
+# Default target for source files
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c $(SRCDIR)/%.h
 	@echo "Building $(shell basename $@)"
 	@mkdir -p $(shell dirname $@)
