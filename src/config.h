@@ -1,7 +1,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 // Libraries
-#include "types/customized.h"
+#include "types/customized/customized.h"
 #include "packages.h"
 #include <stdlib.h>
 #include <stddef.h>

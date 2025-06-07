@@ -1,13 +1,13 @@
 
 // Header file
-#include "headers/types/customized.h"
+#include "customized.h"
 
 // Libraries
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include "headers/utils/fileutils.h"
-#include "headers/utils/path.h"
+#include "../../utils/fileutils.h"
+#include "../../utils/path.h"
 
 
 void create_customized(const char *path, const char *content, const mode_t perm) {
@@ -28,6 +28,8 @@ void create_customized(const char *path, const char *content, const mode_t perm)
     if (!new_path) { // Error checking
         return;
     }
+
+    puts("Random");
 
     // Get parent of new_path to create the path
     const char *new_parent = path_parent(new_path);
