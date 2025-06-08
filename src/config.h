@@ -3,7 +3,10 @@
 // Libraries
 #include "types/customized/customized.h"
 #include "types/distro/distro.h"
+#include "types/display/windowmanager.h"
+#include "types/display/dspserver.h"
 #include "packages.h"
+#include <stddef.h>
 #include <stdlib.h>
 #include <stddef.h>
 
@@ -81,9 +84,9 @@ static const char *bin_dest = ".local/bin/";
 /// These files will be created by the installer
 // TODO: expand these!!
 static const Customized custom_files[] = {
-    {.path = ".customenv", .content = "", .permission = 0644},
-    {.path = ".customized.sh", .content = customized_sh, .permission = 0644},
 
+
+    /// Customized files for window managers and compositors
     {.path = ".config/i3/customzied/customzied", .content =  "", .permission = 0644},
     {.path = ".config/bspwm/customzied/customzied", .content =  "", .permission = 0644},
     {.path = ".config/awesome/customzied/customzied.lua", .content =  "", .permission = 0644},
@@ -92,38 +95,102 @@ static const Customized custom_files[] = {
     {.path = ".config/river/customzied/customzied", .content =  "", .permission = 0644},
 
 
-    // Customized shell files
+    /// Customized shell files
     {.path = ".customrc", .content =  "", .permission = 0644},
     {.path = ".customenv", .content =   "export BROWSER_PREFIX=\"firefox\"", .permission = 0644},
+    {.path = ".customized.sh", .content = customized_sh, .permission = 0644},
 
 
-    // X11 Startup
+    /// X11 Startup
     {.path = ".local/bin/x11startup", .content =  x11startup, .permission = 0755},
 
 
-    // Xinitrc
+    /// Xinitrc
     {.path = ".xinitrc", .content =  startx_content, .permission = 0644},
 
 
-    // Myterm
+    /// Myterm
     {.path = ".local/bin/myterm", .content =  myterm_content, .permission = 0755},
 
 
-    // GTK3
+    /// GTK3
     {.path = ".config/gtk-3.0/settings.ini", .content =  gtk3_config, .permission = 0644},
 
 
-    // Menus
+    /// Menus
     {.path = ".local/bin/mdmenu", .content =  mdmenu_content, .permission = 0755},
     {.path = ".local/bin/mdrun", .content =  mdrun_content, .permission = 0755},
     {.path = NULL, .content = NULL, .permission = 0}, // The 'NULL terminator'
 };
 
 
+/// Predefined distros
+static const Distro debian = {
+    .install = (const char *[]) {"sudo", "apt", "install", "-y", NULL},
+    .update = (const char *[]) {"sudo", "apt", "update", "-y", NULL},
+    .upgrade = (const char *[]) {"sudo", "apt", "upgrade", "-y", NULL},
+    .suffix = NULL,
+    .basepkg = debian_base,
+};
+
+
+static const Distro fedora = {
+    .install = (const char *[]) {"sudo", "dnf", "install", "-y", NULL},
+    .update = (const char *[]) {"sudo", "dnf", "update", "-y", NULL},
+    .upgrade = NULL,
+    .suffix = NULL,
+    .basepkg = fedora_base,
+};
+
+
+static const Distro arch = {
+    .install = (const char *[]) {"sudo", "pacman", "-S", "--noconfirm", "--needed", NULL},
+    .update = (const char *[]) {"sudo", "pacman", "Syu", "--noconfirm", "--needed", NULL},
+    .upgrade = NULL,
+    .suffix = (const char *[]) {"--noconfirm", "--needed", NULL},
+    .basepkg = arch_base,
+};
+
+
+/// Predefined Window managers
+static const WindowManager i3 = {
+    .packages = (const char **[]){debian_i3, fedora_i3, arch_i3, NULL}
+};
+
+static const WindowManager awesome = {
+    .packages = (const char **[]){debian_awesome, fedora_awesome, arch_awesome, NULL}
+};
+
+static const WindowManager bspwm = {
+    .packages = (const char **[]){debian_bspwm, fedora_bspwm, arch_bspwm, NULL}
+};
+
+static const WindowManager sway = {
+    .packages = (const char **[]){debian_sway, fedora_sway, arch_sway, NULL}
+};
+
+static const WindowManager hypr = {
+    .packages = (const char **[]){debian_sway, fedora_hypr, arch_hypr, NULL}
+};
+
+static const WindowManager river = {
+    .packages = (const char **[]){debian_sway, fedora_river, arch_river, NULL}
+};
 
 
 
+/// Predefined display servers
+static const DspServer xorg = {
+    .packages = (const char **[]){debian_xorg, fedora_xorg, arch_xorg, NULL}
+};
 
+static const DspServer wayland = {
+    .packages = (const char **[]){debian_wayland, fedora_wayland, arch_wayland, NULL}
+};
 
+// TODO: Add tty packages
+static const DspServer tty = {
+    .packages = (const char **[]){debian_wayland, fedora_wayland, arch_wayland, NULL}
+};
 
 #endif // CONFIG_H
