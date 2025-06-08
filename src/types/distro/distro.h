@@ -11,4 +11,11 @@ typedef struct _Distro {
     const char **basepkg;
 } Distro;
 
+
+typedef enum _DistroIndex {
+    DEBIAN = 0,
+    FEDORA = 1,
+    ARCH = 2
+} DistroIndex;
+
 #endif // DISTRO_H
