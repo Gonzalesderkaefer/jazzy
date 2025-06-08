@@ -32,6 +32,8 @@ $(BUILDDIR)/utils/fileutils.o: $(SUBPROCS)/utils/fileutils/Makefile
 	@mkdir -p $(shell dirname $@)
 	@(cd $(shell dirname $<); make export)
 	cp $(shell dirname $<)/target/fileutils.o $@
+	cp $(shell dirname $<)/target/*.h $(SRCDIR)/utils/
+
 
 
 
