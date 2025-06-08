@@ -3,7 +3,9 @@
 
 
 typedef struct _DspServer {
-    static const char **packages;
+    const char **debpackages;
+    const char **fedpackages;
+    const char **archpackages;
 } DspServer;
 
 #endif // DSP_SERVER_H

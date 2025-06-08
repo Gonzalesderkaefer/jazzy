@@ -2,7 +2,9 @@
 #define WINDOW_MANAGER_H
 
 typedef struct _WindowManager {
-    static const char **packages;
+    const char **debpackages;
+    const char **fedpackages;
+    const char **archpackages;
 } WindowManager;
 
 
