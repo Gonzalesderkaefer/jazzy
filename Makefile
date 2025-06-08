@@ -14,16 +14,24 @@ BUILDDIR := build
 SOURCES := $(shell find $(SRCDIR) -type f -name *.c)
 
 # Derive Object files from source files
-OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.c=.o))
+OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.c=.o)) \
+		$(BUILDDIR)/utils/fileutils.o
 
 # Derive Header files from source files
 HEADERS := $(SOURCES:.c=.h)
 
-
+# Subprojects
+SUBPROCS := subprojects
 
 default: $(OBJECTS)
 	@echo "Linking jazzy.out"
 	$(CC) $^ -o jazzy.out
+
+
+$(BUILDDIR)/utils/fileutils.o: $(SUBPROCS)/utils/fileutils/Makefile
+	@mkdir -p $(shell dirname $@)
+	@(cd $(shell dirname $<); make export)
+	cp $(shell dirname $<)/target/fileutils.o $@
 
 
 

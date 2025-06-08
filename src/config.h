@@ -2,6 +2,7 @@
 #define CONFIG_H
 // Libraries
 #include "types/customized/customized.h"
+#include "types/distro/distro.h"
 #include "packages.h"
 #include <stdlib.h>
 #include <stddef.h>
@@ -13,6 +14,9 @@
 ///
 /// File paths are relative to $HOME and cannot start with '/'
 
+/// This is the home dir and will be defined in
+/// in main.c
+extern char *home_dir;
 
 /// ## Config files
 /// Move everything in $HOME/Jazzian/dotfiles/config/ into $HOME/.config/
@@ -75,10 +79,44 @@ static const char *bin_dest = ".local/bin/";
 
 
 /// These files will be created by the installer
+// TODO: expand these!!
 static const Customized custom_files[] = {
-   {.path = ".customenv", .content = "", .permission = 0644},
-   {.path = ".customized.sh", .content = customized_sh, .permission = 0644},
-   {.path = NULL, .content = NULL, .permission = 0}, // The 'NULL terminator'
+    {.path = ".customenv", .content = "", .permission = 0644},
+    {.path = ".customized.sh", .content = customized_sh, .permission = 0644},
+
+    {.path = ".config/i3/customzied/customzied", .content =  "", .permission = 0644},
+    {.path = ".config/bspwm/customzied/customzied", .content =  "", .permission = 0644},
+    {.path = ".config/awesome/customzied/customzied.lua", .content =  "", .permission = 0644},
+    {.path = ".config/sway/customzied/customzied", .content =  "", .permission = 0644},
+    {.path = ".config/hypr/customzied/customzied", .content =  "", .permission = 0644},
+    {.path = ".config/river/customzied/customzied", .content =  "", .permission = 0644},
+
+
+    // Customized shell files
+    {.path = ".customrc", .content =  "", .permission = 0644},
+    {.path = ".customenv", .content =   "export BROWSER_PREFIX=\"firefox\"", .permission = 0644},
+
+
+    // X11 Startup
+    {.path = ".local/bin/x11startup", .content =  x11startup, .permission = 0755},
+
+
+    // Xinitrc
+    {.path = ".xinitrc", .content =  startx_content, .permission = 0644},
+
+
+    // Myterm
+    {.path = ".local/bin/myterm", .content =  myterm_content, .permission = 0755},
+
+
+    // GTK3
+    {.path = ".config/gtk-3.0/settings.ini", .content =  gtk3_config, .permission = 0644},
+
+
+    // Menus
+    {.path = ".local/bin/mdmenu", .content =  mdmenu_content, .permission = 0755},
+    {.path = ".local/bin/mdrun", .content =  mdrun_content, .permission = 0755},
+    {.path = NULL, .content = NULL, .permission = 0}, // The 'NULL terminator'
 };
 
 
