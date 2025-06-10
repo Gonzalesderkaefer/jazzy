@@ -15,7 +15,12 @@ typedef struct _Distro {
 typedef enum _DistroIndex {
     DEBIAN = 0,
     FEDORA = 1,
-    ARCH = 2
+    ARCH = 2,
+    NONE = 3
 } DistroIndex;
+
+
+
+const DistroIndex get_distro();
 
 #endif // DISTRO_H

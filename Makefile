@@ -25,7 +25,7 @@ SUBPROCS := subprojects
 
 default: $(OBJECTS)
 	@echo "Linking jazzy.out"
-	$(CC) $^ -o jazzy.out
+	@$(CC) $^ -o jazzy.out
 
 
 $(BUILDDIR)/utils/fileutils.o: $(SUBPROCS)/utils/fileutils/Makefile
@@ -38,7 +38,7 @@ $(BUILDDIR)/utils/fileutils.o: $(SUBPROCS)/utils/fileutils/Makefile
 
 
 # Custom recipe for main.c
-$(BUILDDIR)/main.o: $(SRCDIR)/main.c
+$(BUILDDIR)/main.o: $(SRCDIR)/main.c $(SRCDIR)/config.h
 	@echo "Building $(shell basename $@)"
 	@mkdir -p $(shell dirname $@)
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -49,3 +49,7 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.c $(SRCDIR)/%.h
 	@echo "Building $(shell basename $@)"
 	@mkdir -p $(shell dirname $@)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	@rm -rf $(BUILDDIR)/*
+	@rm jazzy.out

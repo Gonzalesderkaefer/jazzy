@@ -144,8 +144,8 @@ static const Distro fedora = {
 
 
 static const Distro arch = {
-    .install = (const char *[]) {"sudo", "pacman", "-S", "--noconfirm", "--needed", NULL},
-    .update = (const char *[]) {"sudo", "pacman", "Syu", "--noconfirm", "--needed", NULL},
+    .install = (const char *[]) {"sudo", "pacman", "-S", NULL},
+    .update = (const char *[]) {"sudo", "pacman", "-Syu", "--needed", "--noconfirm", NULL},
     .upgrade = NULL,
     .suffix = (const char *[]) {"--noconfirm", "--needed", NULL},
     .basepkg = arch_base,
@@ -180,17 +180,16 @@ static const WindowManager river = {
 
 
 /// Predefined display servers
-static const DspServer xorg = {
-    .packages = (const char **[]){debian_xorg, fedora_xorg, arch_xorg, NULL}
+static DspServer xorg = (DspServer) {
+    .packages = (const char **[]){debian_xorg, fedora_xorg, arch_xorg, NULL},
 };
 
-static const DspServer wayland = {
-    .packages = (const char **[]){debian_wayland, fedora_wayland, arch_wayland, NULL}
+static DspServer wayland = {
+    .packages = (const char **[]){debian_wayland, fedora_wayland, arch_wayland, NULL},
 };
 
-// TODO: Add tty packages
-static const DspServer tty = {
-    .packages = (const char **[]){debian_wayland, fedora_wayland, arch_wayland, NULL}
+static DspServer tty = {
+    .packages = (const char **[]){debian_desktop, fedora_desktop, arch_desktop, NULL},
 };
 
 #endif // CONFIG_H
