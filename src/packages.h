@@ -137,20 +137,6 @@ static const char *debian_river[] = {
 };
 
 
-static const char *debian_update[] = {
-    "sudo",
-    "apt",
-    "update",
-    NULL
-};
-
-static const char *debian_upgrade[] = {
-    "sudo",
-    "apt",
-    "upgrade",
-    "-y",
-    NULL
-};
 
 
 // Fedora desktop packages
@@ -284,13 +270,6 @@ static const char *fedora_sway[] = {
     NULL
 };
 
-static const char *fedora_update[] = {
-    "sudo",
-    "dnf",
-    "update",
-    "-y",
-    NULL
-};
 
 
 // Arch linux desktop packages
@@ -434,15 +413,6 @@ static const char *arch_river[] = {
     "waybar",
     "river",
     "swaybg",
-    NULL
-};
-
-static const char *arch_update[] = {
-    "sudo",
-    "pacman",
-    "-Syu",
-    "--noconfirm",
-    "--needed",
     NULL
 };
 
