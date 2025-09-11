@@ -1,5 +1,6 @@
 // Libraries
 use std::path::Path;
+use std::fs;
 
 /// Copy a directory from `from` to `to`.
 ///
@@ -12,4 +13,12 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(from: P, to: Q) {
     // Save from and to as (refs to) paths
     let from_path = from.as_ref();
     let to_path = to.as_ref();
+
+    // Check if to exists
+    if ! to_path.exists() {
+        // Create to and recursively call function
+        fs::create_dir_all(to_path);
+        copy_dir(from_path, to_path);
+    }
+
 }
