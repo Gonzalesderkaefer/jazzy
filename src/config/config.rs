@@ -9,5 +9,3 @@ pub static CFGDEST: &'static str = ".config/";
 /// Custom scripts
 pub static BINSRC: &'static str = "Jazzian/dotfiles/bin/";
 pub static BINDEST: &'static str = ".local/bin/";
-
-
