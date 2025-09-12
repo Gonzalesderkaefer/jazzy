@@ -1,7 +1,7 @@
 // Libraries
 use std::{path::Path};
 use std::error::Error;
-use std::{fs, io, fmt}; 
+use std::{fs, io, fmt};
 
 
 
@@ -9,10 +9,12 @@ use std::{fs, io, fmt};
 #[derive(Debug)]
 enum ErrEnum {
     IO (io::Error),
-    RootSrc
+    RootSrc,
+    NoSource (String),
+    InvalidSrc,
 }
 
-/// This modules Error type
+/// This module's Error type
 #[derive(Debug)]
 pub struct FileUtilErr {
     error: ErrEnum,
@@ -26,6 +28,12 @@ impl fmt::Display for FileUtilErr {
             ErrEnum::RootSrc => {
                 return write!(f, "Root cannot be the source when copying directories");
             },
+            ErrEnum::NoSource (source) => {
+                return write!(f, "No source: \"{source}\"");
+            }
+            ErrEnum::InvalidSrc => {
+                return write!(f, "Source is not valid unicode");
+            }
         }
     }
 }
@@ -49,7 +57,12 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> Result<()
 
     // Check if from exists
     if ! source_path.exists() {
-        return Ok(());
+        // Get source path as &str
+        let source_path_str = match source_path.to_str() {
+            Some(str) => str,
+            None => { return Err(FileUtilErr { error: ErrEnum::InvalidSrc, }); }
+        };
+        return Err(FileUtilErr { error: ErrEnum::NoSource(String::from(source_path_str)) });
     }
 
     // Check if to exists
@@ -72,9 +85,10 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> Result<()
 
     // create the destination path
     let create_dir_result = fs::create_dir_all(dest_path);
+    // Check its result, and return if it failed
     match create_dir_result {
         Ok(_) => {},
-        Err(e) => { 
+        Err(e) => {
             return Err(FileUtilErr {
                 error: ErrEnum::IO(e),
             }); 
@@ -82,7 +96,7 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> Result<()
     }
 
 
-    // Open from_dir
+    // Open source_dir
     let from_dir = match fs::read_dir(source_path) {
         Ok(dir) => dir,
         Err(e) => { 
@@ -92,7 +106,7 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> Result<()
         },
     };
 
-    // Iterate through `from_dir`
+    // Iterate through source_dir
     for from_entries in from_dir {
         // Open directory entry as entry
         let opened_entry = match from_entries {
@@ -114,14 +128,14 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> Result<()
             },
         };
 
-        // Get the basename of the opened dir
+        // Get the basename of the opened entry
         let opened_basename = opened_entry.file_name();
 
-        // Build new source directory
+        // Build new source path
         let mut source_dir_path = source_path.to_path_buf();
         source_dir_path.push(&opened_basename);
 
-        // Build new destination directory
+        // Build new destination path
         let mut dest_dir_path = dest_path.to_path_buf();
         dest_dir_path.push(&opened_basename);
 
@@ -147,3 +161,16 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> Result<()
     }
     return Ok(());
 }
+
+
+
+
+/// Create a file and write contents to it.
+///
+/// This fucntion creates a file including its parent directory structure writes `contents` to the
+/// file. If the file already exists, no action is taken.
+pub fn create_file_and_write<P: AsRef<Path> C: AsRef<[u8]>>(path: P, contents: C) -> Result<(), FileUtilErr> {
+    return Ok(());
+}
+
+
