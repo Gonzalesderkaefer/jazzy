@@ -1,9 +1,35 @@
 // Libraries
-use std::path::Path;
-use std::fs; use std::io; /// This struct represents an Error for this module
-pub struct FileUtilErr {}
+use std::{path::Path};
+use std::error::Error;
+use std::{fs, io, fmt}; 
 
 
+
+/// This enum is used to signal the type of error in this module
+#[derive(Debug)]
+enum ErrEnum {
+    IO (io::Error),
+    RootSrc
+}
+
+/// This modules Error type
+#[derive(Debug)]
+pub struct FileUtilErr {
+    error: ErrEnum,
+}
+impl fmt::Display for FileUtilErr {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+        match &self.error {
+            ErrEnum::IO (err) => {
+                return write!(f, "Internal IO Error: {}", err);
+            },
+            ErrEnum::RootSrc => {
+                return write!(f, "Root cannot be the source when copying directories");
+            },
+        }
+    }
+}
+impl Error for FileUtilErr {}
 
 
 /// Copy a directory from `from` to `to`.
@@ -13,7 +39,7 @@ pub struct FileUtilErr {}
 ///  * `to` does not exist, then to will become the new dir name i.e it will
 ///     be created and the contents of `from` will be copied into `to`
 ///  * `to` does not exist, then no action is taken
-pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> io::Result<()> {
+pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> Result<(), FileUtilErr> {
     // Save from and to as (refs to) paths
     let source_path = source.as_ref();
     let mut dest_path = dest.as_ref();
@@ -31,7 +57,11 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> io::Resul
         // Get basename of source
         let source_basename = match source_path.file_name() {
             Some(basename) => basename,
-            None => todo!(),
+            None => {
+                return Err(FileUtilErr {
+                    error: ErrEnum::RootSrc,
+                });
+            }
         };
         // append basename of source to destination
         dest_buffer = dest_path.join(source_basename);
@@ -44,14 +74,22 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> io::Resul
     let create_dir_result = fs::create_dir_all(dest_path);
     match create_dir_result {
         Ok(_) => {},
-        Err(e) => { return Err(e); },
+        Err(e) => { 
+            return Err(FileUtilErr {
+                error: ErrEnum::IO(e),
+            }); 
+        },
     }
 
 
     // Open from_dir
     let from_dir = match fs::read_dir(source_path) {
         Ok(dir) => dir,
-        Err(e) => { return Err(e); },
+        Err(e) => { 
+            return Err(FileUtilErr {
+                error: ErrEnum::IO(e),
+            }); 
+        },
     };
 
     // Iterate through `from_dir`
@@ -59,13 +97,21 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> io::Resul
         // Open directory entry as entry
         let opened_entry = match from_entries {
             Ok(entry) => entry,
-            Err(e) => { return Err(e); },
+            Err(e) => { 
+                return Err(FileUtilErr {
+                    error: ErrEnum::IO(e),
+                }); 
+            },
         };
 
         // Get the file_type of the opened_entry
         let opened_file_type = match opened_entry.file_type() {
             Ok (file_type) => file_type,
-            Err(e) => { return Err(e); },
+            Err(e) => {
+                return Err(FileUtilErr {
+                    error: ErrEnum::IO(e),
+                });
+            },
         };
 
         // Get the basename of the opened dir
@@ -84,20 +130,20 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> io::Resul
             // Call the function recursively
             match copy_dir(source_dir_path.as_path(), dest_dir_path.as_path()) {
                 Ok(()) => {},
-                Err(e) => { return Err(e); },
+                Err(e) => {
+                    return Err(e);
+                },
             }
         } else {
             match fs::copy(source_dir_path.as_path(), dest_dir_path.as_path()) {
                 Ok(_) => {},
-                Err(e) => { return Err(e); },
+                Err(e) => {
+                    return Err(FileUtilErr {
+                        error: ErrEnum::IO(e),
+                    });
+                },
             }
         }
-
     }
-
-
-
-
     return Ok(());
-
 }
