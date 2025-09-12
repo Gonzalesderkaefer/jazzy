@@ -24,7 +24,11 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(from: P, to: Q) -> io::Result<()
     // Check if to exists
     if ! to_path.exists() {
         // Create to and recursively call function
-        fs::create_dir_all(to_path);
+        let create_dir_result = fs::create_dir_all(to_path);
+        match (create_dir_result) {
+            Ok(none) => {},
+            Err(e) => { return Err(e); },
+        }
     }
 
     // Open from_dir
@@ -48,7 +52,9 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(from: P, to: Q) -> io::Result<()
         };
 
         // check if opened_entry is a directory
-        if is_dir(opened_file_type) {
+        if opened_file_type.is_dir() {
+            let opened_basename = opened_entry.file_name();
+
         }
     }
 
