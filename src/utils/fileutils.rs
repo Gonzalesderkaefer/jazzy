@@ -13,31 +13,43 @@ pub struct FileUtilErr {}
 ///  * `to` does not exist, then to will become the new dir name i.e it will
 ///     be created and the contents of `from` will be copied into `to`
 ///  * `to` does not exist, then no action is taken
-pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(from: P, to: Q) -> io::Result<()> {
+pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> io::Result<()> {
     // Save from and to as (refs to) paths
-    let from_path = from.as_ref();
-    let to_path = to.as_ref();
+    let source_path = source.as_ref();
+    let mut dest_path = dest.as_ref();
+
+    // Needed when editing dest_path
+    let dest_buffer: std::path::PathBuf;
 
     // Check if from exists
-    if ! from_path.exists() {
+    if ! source_path.exists() {
         return Ok(());
     }
 
     // Check if to exists
-    if ! to_path.exists() {
-        // Create to
-        let create_dir_result = fs::create_dir_all(to_path);
-        match (create_dir_result) {
-            Ok(none) => {},
-            Err(e) => { return Err(e); },
-        }
-        // call the function recursively
-        let copy_result = copy_dir(from_path, to_path);
-        return copy_result;
+    if dest_path.exists() {
+        // Get basename of source
+        let source_basename = match source_path.file_name() {
+            Some(basename) => basename,
+            None => todo!(),
+        };
+        // append basename of source to destination
+        dest_buffer = dest_path.join(source_basename);
+
+        // change value in dest_path
+        dest_path = dest_buffer.as_path();
     }
 
+    // create the destination path
+    let create_dir_result = fs::create_dir_all(dest_path);
+    match create_dir_result {
+        Ok(_) => {},
+        Err(e) => { return Err(e); },
+    }
+
+
     // Open from_dir
-    let from_dir = match (fs::read_dir(from_path)) {
+    let from_dir = match fs::read_dir(source_path) {
         Ok(dir) => dir,
         Err(e) => { return Err(e); },
     };
@@ -45,13 +57,13 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(from: P, to: Q) -> io::Result<()
     // Iterate through `from_dir`
     for from_entries in from_dir {
         // Open directory entry as entry
-        let opened_entry = match (from_entries) {
+        let opened_entry = match from_entries {
             Ok(entry) => entry,
             Err(e) => { return Err(e); },
         };
 
         // Get the file_type of the opened_entry
-        let opened_file_type = match (opened_entry.file_type()) {
+        let opened_file_type = match opened_entry.file_type() {
             Ok (file_type) => file_type,
             Err(e) => { return Err(e); },
         };
@@ -60,11 +72,11 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(from: P, to: Q) -> io::Result<()
         let opened_basename = opened_entry.file_name();
 
         // Build new source directory
-        let mut source_dir_path = from_path.to_path_buf();
+        let mut source_dir_path = source_path.to_path_buf();
         source_dir_path.push(&opened_basename);
 
         // Build new destination directory
-        let mut dest_dir_path = to_path.to_path_buf();
+        let mut dest_dir_path = dest_path.to_path_buf();
         dest_dir_path.push(&opened_basename);
 
         // check if opened_entry is a directory
@@ -76,7 +88,7 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(from: P, to: Q) -> io::Result<()
             }
         } else {
             match fs::copy(source_dir_path.as_path(), dest_dir_path.as_path()) {
-                Ok(num) => {},
+                Ok(_) => {},
                 Err(e) => { return Err(e); },
             }
         }
