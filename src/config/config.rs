@@ -25,12 +25,24 @@ pub struct Distro {
     id: DistroId,
     supported_wms: &'static [&'static WindowManager],
     supported_comps: &'static [&'static Compositor],
+    supported_dsp_serv: &'static [&'static DspServer],
     install: &'static [&'static str],
     update: &'static [&'static str],
     upgrade: &'static [&'static str],
     packages: &'static [&'static str],
 }
 
+
+pub enum DspServerId {
+    Wayland,
+    Xorg,
+    Tty,
+}
+
+pub struct DspServer {
+    id: DspServerId,
+    packages: [Option<&'static [&'static str]>; DistroId::Other as usize],
+}
 
 /// Enum for the compositor
 pub enum CompositorId {
