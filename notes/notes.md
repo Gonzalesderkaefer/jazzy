@@ -3,13 +3,13 @@
 
 
 ## Procedure
-  * Determine Distro
+  * Determine Distro {#distroanc}
   * Present choices based on distro
   * Read choices
   * Create model from choices
   * 'apply' model
 
-## Modelling (These are predefined)
+## Modelling (Instances of these are predefined in the config module)
 
 ### Machine
   * Has a home directory
@@ -17,26 +17,33 @@
   * Has a setup function
 
 ### Distro
+  * Has an id
   * Has supported [display servers](#display-server) as references
   * Has supported [window managers](#window-manager) as references
-  * Base packages (should work with 'TTY')
+  * Has an install command
+  * Has an update command
+  * Has an upgrade command (Optional)
+  * Has Base packages (should work with 'TTY')
   * Has a setup function
 
 ### Display Server
+  * Has an id
   * Has packages
   * Has [window managers](#window-manager) as references
   * Has a setup function
 
 ### Window Manager
+  * Has an id
   * Has packages
   * Has a setup function
+  * Implements `PartialEq`
 
-
+All the types above execept [Machine](#machine) has its own enum that contains the types themselves
 
 ## File utils
 
 ### Copy dir behavior
-  * if source does not exist, return
+  * if source does not exist, [return](#distroanc)
   * if target dir does not exist, create it and copy contents from inside src
     into newly created target.
   * if target dir does exist copy the entire srcdir as a childdir of target
