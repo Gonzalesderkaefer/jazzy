@@ -9,5 +9,4 @@ mod utils;
 use utils::fileutils as fu;
 
 fn main() {
-    fu::copy_dir("./notes", "./shitty_notes");
 }

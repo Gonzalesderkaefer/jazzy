@@ -5,35 +5,36 @@ use std::{fs, io, fmt};
 
 
 
-/// This enum is used to signal the type of error in this module
+/// This module's Error type
 #[derive(Debug)]
-enum ErrEnum {
+pub enum FileUtilErr {
+    // copy_dir
     IO (io::Error),
     RootSrc,
     NoSource (String),
     InvalidSrc,
-}
 
-/// This module's Error type
-#[derive(Debug)]
-pub struct FileUtilErr {
-    error: ErrEnum,
+    // create_file_and_write
+    WriteToDir,
 }
 impl fmt::Display for FileUtilErr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
-        match &self.error {
-            ErrEnum::IO (err) => {
+        match &self {
+            Self::IO (err) => {
                 return write!(f, "Internal IO Error: {}", err);
             },
-            ErrEnum::RootSrc => {
+            Self::RootSrc => {
                 return write!(f, "Root cannot be the source when copying directories");
             },
-            ErrEnum::NoSource (source) => {
+            Self::NoSource (source) => {
                 return write!(f, "No source: \"{source}\"");
-            }
-            ErrEnum::InvalidSrc => {
+            },
+            Self::InvalidSrc => {
                 return write!(f, "Source is not valid unicode");
-            }
+            },
+            Self::WriteToDir => {
+                return write!(f, "Can't write to a directory");
+            },
         }
     }
 }
@@ -60,9 +61,9 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> Result<()
         // Get source path as &str
         let source_path_str = match source_path.to_str() {
             Some(str) => str,
-            None => { return Err(FileUtilErr { error: ErrEnum::InvalidSrc, }); }
+            None => { return Err(FileUtilErr::InvalidSrc); }
         };
-        return Err(FileUtilErr { error: ErrEnum::NoSource(String::from(source_path_str)) });
+        return Err(FileUtilErr::NoSource(String::from(source_path_str)));
     }
 
     // Check if to exists
@@ -71,9 +72,7 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> Result<()
         let source_basename = match source_path.file_name() {
             Some(basename) => basename,
             None => {
-                return Err(FileUtilErr {
-                    error: ErrEnum::RootSrc,
-                });
+                return Err(FileUtilErr::RootSrc);
             }
         };
         // append basename of source to destination
@@ -89,9 +88,7 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> Result<()
     match create_dir_result {
         Ok(_) => {},
         Err(e) => {
-            return Err(FileUtilErr {
-                error: ErrEnum::IO(e),
-            }); 
+            return Err(FileUtilErr::IO(e)); 
         },
     }
 
@@ -100,9 +97,7 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> Result<()
     let from_dir = match fs::read_dir(source_path) {
         Ok(dir) => dir,
         Err(e) => { 
-            return Err(FileUtilErr {
-                error: ErrEnum::IO(e),
-            }); 
+            return Err(FileUtilErr::IO(e)); 
         },
     };
 
@@ -112,9 +107,7 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> Result<()
         let opened_entry = match from_entries {
             Ok(entry) => entry,
             Err(e) => { 
-                return Err(FileUtilErr {
-                    error: ErrEnum::IO(e),
-                }); 
+                return Err(FileUtilErr::IO(e)); 
             },
         };
 
@@ -122,9 +115,7 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> Result<()
         let opened_file_type = match opened_entry.file_type() {
             Ok (file_type) => file_type,
             Err(e) => {
-                return Err(FileUtilErr {
-                    error: ErrEnum::IO(e),
-                });
+                return Err(FileUtilErr::IO(e));
             },
         };
 
@@ -152,9 +143,7 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> Result<()
             match fs::copy(source_dir_path.as_path(), dest_dir_path.as_path()) {
                 Ok(_) => {},
                 Err(e) => {
-                    return Err(FileUtilErr {
-                        error: ErrEnum::IO(e),
-                    });
+                    return Err(FileUtilErr::IO(e));
                 },
             }
         }
@@ -169,7 +158,37 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> Result<()
 ///
 /// This fucntion creates a file including its parent directory structure writes `contents` to the
 /// file. If the file already exists, no action is taken.
-pub fn create_file_and_write<P: AsRef<Path> C: AsRef<[u8]>>(path: P, contents: C) -> Result<(), FileUtilErr> {
+pub fn create_and_write<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, contents: C) -> Result<(), FileUtilErr> {
+    // Check if new_file already exists
+    if new_file.as_ref().exists() {
+        return Ok(());
+    }
+
+    // Check if path is a directory
+    if new_file.as_ref().is_dir() {
+         return Err(FileUtilErr::WriteToDir);
+    }
+
+    // Get the parent of the new file
+    let parent_of_new_file = match new_file.as_ref().parent() {
+        Some(parent) => parent,
+        None => { return Err(FileUtilErr::WriteToDir); },
+    };
+
+    // Create the parent if necessary
+    if ! parent_of_new_file.exists() {
+        match fs::create_dir_all(parent_of_new_file) {
+            Ok(()) => {},
+            Err(e) => { return Err(FileUtilErr::IO(e)); },
+        }
+    }
+
+    // finally write the file
+    match fs::write(new_file, contents) {
+        Ok(_) => {},
+        Err(e) => { return Err(FileUtilErr::IO(e)); }
+    }
+
     return Ok(());
 }
 
