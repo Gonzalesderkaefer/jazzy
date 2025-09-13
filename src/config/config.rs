@@ -23,6 +23,8 @@ pub enum DistroId {
 /// Metadata for the distro
 pub struct Distro {
     id: DistroId,
+    supported_wms: &'static [&'static WindowManager],
+    supported_comps: &'static [&'static Compositor],
     install: &'static [&'static str],
     update: &'static [&'static str],
     upgrade: &'static [&'static str],
@@ -30,23 +32,31 @@ pub struct Distro {
 }
 
 
-
-
-/// Enum for the window manager
-pub enum WindowManagerId {
-    Awesome,
-    Bspwm,
-    I3,
+/// Enum for the compositor
+pub enum CompositorId {
     Sway,
     Niri,
     River,
     Hyprland,
 }
 
+/// Metadata for the compositor
+pub struct Compositor {
+    id: CompositorId,
+    packages: [Option<&'static [&'static str]>; DistroId::Other as usize],
+}
+
+/// Enum for the window manager
+pub enum WindowManagerId {
+    Awesome,
+    Bspwm,
+    I3,
+}
+
 /// Metadata for the window manager
 pub struct WindowManager {
-    id: WindowManagerId
-    packages: [Option<&'static [&'static str]>; Distro::Other as usize],
+    id: WindowManagerId,
+    packages: [Option<&'static [&'static str]>; DistroId::Other as usize],
     setup_callback: fn(),
 }
 
