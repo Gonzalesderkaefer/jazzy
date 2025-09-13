@@ -11,3 +11,43 @@ pub static BINSRC: &'static str = "Jazzian/dotfiles/bin/";
 pub static BINDEST: &'static str = ".local/bin/";
 
 
+
+/// Enum for the distroid
+pub enum DistroId {
+    Debian,
+    Fedora,
+    Arch,
+    Other,
+}
+
+/// Metadata for the distro
+pub struct Distro {
+    id: DistroId,
+    install: &'static [&'static str],
+    update: &'static [&'static str],
+    upgrade: &'static [&'static str],
+    packages: &'static [&'static str],
+}
+
+
+
+
+/// Enum for the window manager
+pub enum WindowManagerId {
+    Awesome,
+    Bspwm,
+    I3,
+    Sway,
+    Niri,
+    River,
+    Hyprland,
+}
+
+/// Metadata for the window manager
+pub struct WindowManager {
+    id: WindowManagerId
+    packages: [Option<&'static [&'static str]>; Distro::Other as usize],
+    setup_callback: fn(),
+}
+
+
