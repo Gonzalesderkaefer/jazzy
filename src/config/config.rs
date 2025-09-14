@@ -1,3 +1,8 @@
+use crate::machine::distro;
+use crate::machine::window_manager as wm;
+use crate::machine::dsp_server as display;
+
+
 /// This file defines all constants that are useful for main.rs
 /// If file paths are used make then relative to $HOME
 
@@ -24,8 +29,8 @@ pub enum DistroId {
 
 #[derive(Debug)]
 pub enum DspServerId {
-    Wayland,
     Xorg,
+    Wayland,
     Tty,
 }
 
@@ -44,4 +49,14 @@ pub enum WindowManagerId {
     Awesome,
     Bspwm,
     I3,
+    Sway,
+    Niri,
+    River,
+    Hyprland,
 }
+
+
+
+
+pub const DISTRO_ASSOC: &'static [(&distro::Distro /* Distro */, &'static str /* corresponding string as it would be found in '/etc/os-release' */)] = &[
+];

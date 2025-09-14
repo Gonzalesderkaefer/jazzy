@@ -11,7 +11,6 @@ pub fn print_menu<'a, Q: MenuEntry>(prompt: &str, choices: &'a [&'a Q]) -> io::R
 
 
 
-
 /// Types that implement this trait will have a way to display the type
 /// as a choice in a multiple choice menu
 pub trait MenuEntry {
