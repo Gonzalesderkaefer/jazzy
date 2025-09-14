@@ -1,15 +1,10 @@
 use std::io;
-
-// Used modules and macros
 use crate::FgColor;
 
 
 
 
-pub fn print_menu(
-    prompt: &str,
-    options: &[&str],
-) -> io::Result<char> {
+pub fn print_menu( prompt: &str, options: &[&str]) -> io::Result<char> {
 
     // First line of prompt
     let mut formated_prompt = String::from(FgColor!(Purple));
@@ -39,3 +34,19 @@ pub fn print_menu(
     let char = buffer.as_bytes()[0];
     return Ok(char as char)
 }
+
+
+
+
+
+/// Types that implement this trait will have a way to display the type
+/// as a choice in a multiple choice menu
+pub trait MenuEntry {
+    /// Create a Menu entry for this type. This will be used to print a Menu screen.
+    fn menu_entry(&self) -> String;
+}
+
+
+
+
+

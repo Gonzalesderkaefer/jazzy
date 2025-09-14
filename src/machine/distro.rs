@@ -1,4 +1,3 @@
-// Use modules
 use super::window_manager::WindowManager;
 use super::compositor::Compositor;
 use super::dsp_server::DspServer;

@@ -13,6 +13,7 @@ pub static BINDEST: &'static str = ".local/bin/";
 
 
 /// Enum for the distroid
+#[derive(Debug)]
 pub enum DistroId {
     Debian,
     Fedora,
@@ -20,31 +21,16 @@ pub enum DistroId {
     Other,
 }
 
-/// Metadata for the distro
-pub struct Distro {
-    id: DistroId,
-    supported_wms: &'static [&'static WindowManager],
-    supported_comps: &'static [&'static Compositor],
-    supported_dsp_serv: &'static [&'static DspServer],
-    install: &'static [&'static str],
-    update: &'static [&'static str],
-    upgrade: &'static [&'static str],
-    packages: &'static [&'static str],
-}
 
-
+#[derive(Debug)]
 pub enum DspServerId {
     Wayland,
     Xorg,
     Tty,
 }
 
-pub struct DspServer {
-    id: DspServerId,
-    packages: [Option<&'static [&'static str]>; DistroId::Other as usize],
-}
-
 /// Enum for the compositor
+#[derive(Debug)]
 pub enum CompositorId {
     Sway,
     Niri,
@@ -52,24 +38,10 @@ pub enum CompositorId {
     Hyprland,
 }
 
-/// Metadata for the compositor
-pub struct Compositor {
-    id: CompositorId,
-    packages: [Option<&'static [&'static str]>; DistroId::Other as usize],
-}
-
 /// Enum for the window manager
+#[derive(Debug)]
 pub enum WindowManagerId {
     Awesome,
     Bspwm,
     I3,
 }
-
-/// Metadata for the window manager
-pub struct WindowManager {
-    id: WindowManagerId,
-    packages: [Option<&'static [&'static str]>; DistroId::Other as usize],
-    setup_callback: fn(),
-}
-
-

@@ -1,26 +1,25 @@
-use crate::config::config;
-use crate::menu::menu;
 use std::fmt;
+use crate::menu::menu;
 
 
 
-impl fmt::Display for config::DspServerId {
+#[derive(Debug)]
+pub enum Transfer {
+    Link,
+    Copy,
+    None,
+}
+
+impl fmt::Display for Transfer {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         return write!(f, "{:?}", self);
     }
 }
 
-pub struct DspServer {
-    id: config::DspServerId,
-    packages: [Option<&'static [&'static str]>; config::DistroId::Other as usize],
-}
-
-
-
-impl menu::MenuEntry for DspServer {
+impl menu::MenuEntry for Transfer {
     fn menu_entry(&self) -> String {
         // Store id as string
-        let mut self_as_string = self.id.to_string();
+        let mut self_as_string = self.to_string();
 
         // Insert square brackets
         self_as_string.insert(0, '[');
