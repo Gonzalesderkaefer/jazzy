@@ -37,15 +37,3 @@ pub struct Distro {
     /// Required packages to use for a minimal install so that the tty works.
     packages: &'static [&'static str],
 }
-
-
-impl Distro {
-
-    pub fn dsp_menu(&self) -> String {
-        return String::new(); // Replace this.
-    }
-
-    pub fn wm_menu(&self, dsp_server: config::DspServerId) -> String {
-        return String::new(); // Replace this.
-    }
-}

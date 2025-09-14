@@ -4,8 +4,8 @@ use crate::FgColor;
 
 
 
-pub fn print_menu<'a, Q: MenuEntry>(prompt: &str, choices: &'a [&'a Q]) -> io::Result<&'a Q> {
-    return Ok(choices[0]);
+pub fn print_menu<'a, Q: MenuEntry>(prompt: &str, choices: &'a [Option<&'a Q>]) -> io::Result<&'a Q> {
+    todo!()
 }
 
 
