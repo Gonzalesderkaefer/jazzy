@@ -35,6 +35,7 @@ pub enum DspServerId {
 }
 
 /// Enum for the compositor
+/*
 #[derive(Debug)]
 pub enum CompositorId {
     Sway,
@@ -42,6 +43,7 @@ pub enum CompositorId {
     River,
     Hyprland,
 }
+*/
 
 /// Enum for the window manager
 #[derive(Debug)]

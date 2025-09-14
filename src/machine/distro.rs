@@ -10,14 +10,14 @@ pub struct Distro {
     /// Name of the distro. Is an enum.
     id: config::DistroId,
 
+    /// List of display servers supported by this distro. If a display server is not supported,
+    /// its entry in this list will be [None].
+    supported_dsp_serv: [Option<&'static DspServer>; config::DspServerId::Tty as usize],
+
     /// List of List of supported window managers. There are as many lists as there are
     /// display servers. If there's a display server that has no window manager (unlikely)
     /// its entry in this list is [None].
     supported_wms: [Option<&'static [&'static WindowManager]>; config::DspServerId::Tty as usize],
-
-    /// List of display servers supported by this distro. If a display server is not supported,
-    /// its entry in this list will be [None].
-    supported_dsp_serv: [Option<&'static DspServer>; config::DspServerId::Tty as usize],
 
     /// Install command to install packages. These are the words with which the install command
     /// starts. It is generally assumed that install commands have the following structure:
@@ -36,4 +36,16 @@ pub struct Distro {
 
     /// Required packages to use for a minimal install so that the tty works.
     packages: &'static [&'static str],
+}
+
+
+impl Distro {
+
+    pub fn dsp_menu(&self) -> String {
+        return String::new(); // Replace this.
+    }
+
+    pub fn wm_menu(&self, dsp_server: config::DspServerId) -> String {
+        return String::new(); // Replace this.
+    }
 }
