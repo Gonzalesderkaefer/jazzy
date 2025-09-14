@@ -1,18 +1,14 @@
 use super::window_manager::WindowManager;
 use super::compositor::Compositor;
 use super::dsp_server::DspServer;
+use crate::config::config;
 
-/// Enum for the distroid
-pub enum DistroId {
-    Debian,
-    Fedora,
-    Arch,
-    Other,
-}
 
-/// Metadata for the distro
+/// The distro this program is running on.
+///
+/// This struct stores metadata for a certain distro
 pub struct Distro {
-    id: DistroId,
+    id: config::DistroId,
     supported_wms: &'static [&'static WindowManager],
     supported_comps: &'static [&'static Compositor],
     supported_dsp_serv: &'static [&'static DspServer],
