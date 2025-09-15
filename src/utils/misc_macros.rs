@@ -1,5 +1,7 @@
+// NOTE: See rossmacarthur's answer in:
+// https://www.reddit.com/r/rust/comments/zqwggh/how_to_concat_two_const_slices_in_a_const_way
 #[macro_export]
-macro_rules! concat {
+macro_rules! concat_packages {
     (&[$ty:ty]: $($s:expr),+) => {{
         const LEN: usize = $( $s.len() + )* 0;
         const ARR: [$ty; LEN] = {

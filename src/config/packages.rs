@@ -59,8 +59,10 @@ pub const _DEB_XORG: &'static[&'static str] = &[
     "nitrogen",
 ];
 
+pub const DEB_XORG: &'static[&'static str] = crate::concat_packages!(&[&str]: DEB_GUI, _DEB_XORG);
 
-pub const __DEB_WAY: &'static[&'static str] = &[
+
+pub const _DEB_WAY: &'static[&'static str] = &[
     "grim",
     "swaylock",
     "wofi",
@@ -72,6 +74,9 @@ pub const __DEB_WAY: &'static[&'static str] = &[
     "slurp",
 ];
 
+
+
+pub const DEB_WAY: &'static[&'static str] = crate::concat_packages!(&[&str]: DEB_GUI, _DEB_WAY);
 
 pub const DEB_I3: &'static[&'static str] = &[
     "i3",
@@ -161,7 +166,7 @@ pub const _FED_XORG: &'static[&'static str] = &[
     "rxvt-unicode",
     "nitrogen",
 ];
-
+pub const FED_XORG: &'static[&'static str] = crate::concat_packages!(&[&str]: FED_GUI, _FED_XORG);
 
 
 pub const _FED_WAY: &'static[&'static str] = &[
@@ -175,6 +180,8 @@ pub const _FED_WAY: &'static[&'static str] = &[
     "mako",
     "slurp",
 ];
+pub const FED_WAY: &'static[&'static str] = crate::concat_packages!(&[&str]: FED_GUI, _FED_WAY);
+
 
 
 pub const FED_AWE: &'static[&'static str] = &[
@@ -278,6 +285,7 @@ pub const _ARCH_XORG: &'static[&'static str] = &[
     "rxvt-unicode",
     "nitrogen",
 ];
+pub const ARCH_XORG: &'static[&'static str] = crate::concat_packages!(&[&str]: ARCH_GUI, _ARCH_XORG);
 
 
 pub const _ARCH_WAY: &'static[&'static str] = &[
@@ -291,6 +299,9 @@ pub const _ARCH_WAY: &'static[&'static str] = &[
     "mako",
     "slurp",
 ];
+pub const ARCH_WAY: &'static[&'static str] = crate::concat_packages!(&[&str]: ARCH_GUI, _ARCH_WAY);
+
+
 
 pub const ARCH_AWE: &'static[&'static str] = &[
     "awesome",

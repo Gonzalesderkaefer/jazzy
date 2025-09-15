@@ -72,7 +72,7 @@ pub const ARR1: &[&'static str] = &[
 
 
 
-pub const C: &'static [&'static str] = concat!(&[&str]: config::packages::DEB_GUI, config::packages::_DEB_XORG);
+pub const C: &'static [&'static str] = concat_packages!(&[&str]: config::packages::DEB_GUI, config::packages::_DEB_XORG);
 
 
 
