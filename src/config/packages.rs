@@ -1,28 +1,9 @@
-pub const DEB_BASE: &'static[&'static str] = &[
-    "tmux",
-    "vifm",
-    "zsh",
+pub const DEB_GUI: &'static[&'static str] = &[
     "evince",
-    "flatpak",
     "network-manager",
-    "network-manager-gnome",
-    "thunar",
-    "file-roller",
-    "network-manager-openconnect-gnome",
-    "eom",
-    "network-manager-openconnect",
-    "git",
-    "lf",
     "fonts-jetbrains-mono",
-    "firefox-esr",
-    "tlp",
-    "alacritty",
-    "pipewire",
-    "pipewire-alsa",
-    "pipewire-pulse",
-    "libglib2.0-bin",
-    "nala",
     "mpv",
+    "zathura",
     "papirus-icon-theme",
     "gnome-themes-extra",
     "arc-theme",
@@ -32,9 +13,31 @@ pub const DEB_BASE: &'static[&'static str] = &[
     "acpi",
     "linux-cpupower",
     "openssh-server",
+    "firefox-esr",
+    "tlp",
+    "alacritty",
+    "pipewire",
+    "pipewire-alsa",
+    "pipewire-pulse",
+    "libglib2.0-bin",
+    "network-manager-gnome",
+    "thunar",
+    "file-roller",
+    "network-manager-openconnect-gnome",
+    "eom",
+    "network-manager-openconnect",
+];
+
+
+pub const DEB_BASE: &'static[&'static str] = &[
+    "tmux",
+    "vifm",
+    "zsh",
+    "flatpak",
+    "git",
+    "nala",
     "nnn",
     "fzf",
-    "zathura",
     "jq",
 ];
 
@@ -71,19 +74,19 @@ pub const DEB_WAY: &'static[&'static str] = &[
 
 
 pub const DEB_I3: &'static[&'static str] = &[
-  "i3",
-  "i3blocks",
+    "i3",
+    "i3blocks",
 ];
 
 pub const DEB_BSP: &'static[&'static str] = &[
-  "bspwm",
-  "sxhkd",
-  "polybar",
+    "bspwm",
+    "sxhkd",
+    "polybar",
 ];
 
 /* Debian awesome packages */
 pub const DEB_AWE: &'static[&'static str] = &[
-  "awesome",
+    "awesome",
 ];
 
 
@@ -92,61 +95,71 @@ pub const DEB_SWAY: &'static[&'static str] = &[
     "i3blocks",
 ];
 
+
+
+
+
+pub const FED_GUI: &'static[&'static str] = &[
+    "flatpak",
+    "pinentry",
+    "alacritty",
+    "pipewire",
+    "jetbrains-mono-fonts",
+    "papirus-icon-theme-dark",
+    "network-manager-applet",
+    "arc-theme",
+    "pipewire-utils",
+    "file-roller",
+    "pipewire-pulseaudio",
+    "NetworkManager-openconnect-gnome",
+    "gsettings-desktop-schemas",
+    "papirus-icon-theme",
+    "NetworkManager-tui",
+    "eom",
+    "tlp",
+    "libnotify",
+    "pipewire-alsa",
+    "qalculate-gtk",
+    "mpv",
+    "firefox",
+    "zathura",
+    "zathura-pdf-poppler",
+    "evince",
+    "thunar",
+    "mate-polkit",
+    "rofi-wayland",
+];
+
+
+
+
 pub const FED_BASE: &'static[&'static str] = &[
-  "flatpak",
-  "rofi-wayland",
-  "vifm",
-  "tmux",
-  "zsh",
-  "pinentry",
-  "thunar",
-  "mate-polkit",
-  "nnn",
-  "neovim",
-  "alacritty",
-  "mpv",
-  "firefox",
-  "zathura",
-  "zathura-pdf-poppler",
-  "evince",
-  "git",
-  "pipewire",
-  "pipewire-utils",
-  "file-roller",
-  "pipewire-pulseaudio",
-  "NetworkManager-openconnect-gnome",
-  "gsettings-desktop-schemas",
-  "papirus-icon-theme",
-  "NetworkManager-tui",
-  "eom",
-  "tlp",
-  "libnotify",
-  "pipewire-alsa",
-  "qalculate-gtk",
-  "fzf",
-  "jetbrains-mono-fonts",
-  "papirus-icon-theme-dark",
-  "network-manager-applet",
-  "arc-theme",
-  "jq",
+    "vifm",
+    "tmux",
+    "zsh",
+    "nnn",
+    "neovim",
+    "git",
+    "fzf",
+    "jq",
 ];
 
 
 
 pub const FED_XORG: &'static[&'static str] = &[
-  "xclip",
-  "@base-x",
-  "maim",
-  "lxappearance",
-  "xinput",
-  "arandr",
-  "nitrogen",
-  "picom",
-  "dunst",
-  "xclip",
-  "i3lock",
-  "rxvt-unicode",
-  "nitrogen",
+    "xclip",
+    "@base-x",
+    "maim",
+    "lxappearance",
+    "xinput",
+    "arandr",
+    "nitrogen",
+    "picom",
+    "dunst",
+    "xclip",
+    "i3lock",
+    "rxvt-unicode",
+    "nitrogen",
 ];
 
 
@@ -165,63 +178,55 @@ pub const FED_WAY: &'static[&'static str] = &[
 
 
 pub const FED_AWE: &'static[&'static str] = &[
-  "awesome",
+    "awesome",
 ];
 
 pub const FED_BSP: &'static[&'static str] = &[
-  "bspwm",
-  "polybar",
-  "sxhkd",
+    "bspwm",
+    "polybar",
+    "sxhkd",
 ];
 
 pub const FED_I3: &'static[&'static str] = &[
-  "i3",
-  "i3blocks",
+    "i3",
+    "i3blocks",
 ];
 
 
 pub const FED_HYPR: &'static[&'static str] = &[
-  "hyprland",
-  "waybar",
+    "hyprland",
+    "waybar",
 ];
 
 pub const FED_RIV: &'static[&'static str] = &[
-  "river",
-  "waybar",
+    "river",
+    "waybar",
 ];
 
 pub const FED_SWAY: &'static[&'static str] = &[
-  "sway",
-  "i3blocks",
+    "sway",
+    "i3blocks",
 ];
 
 pub const FED_NIR: &'static[&'static str] = &[
-  "niri",
-  "waybar",
+    "niri",
+    "waybar",
 ];
 
 
-pub const ARCH_BASE: &'static[&'static str] = &[
-    "flatpak",
-    "fzf",
-    "tmux",
-    "zsh",
-    "nnn",
+
+
+pub const ARCH_GUI: &'static[&'static str] = &[
     "rofi-wayland",
-    "networkmanager",
-    "thunar",
-    "nm-connection-editor",
-    "neovim",
     "zathura-pdf-poppler",
-    "zathura",
-    "evince",
-    "webkit2gtk-4.1",
-    "networkmanager-openconnect",
-    "firefox",
-    "lf",
     "tlp",
+    "gcr",
     "alacritty",
     "pipewire",
+    "pipewire-pulse",
+    "cpupower",
+    "pipewire-alsa",
+    "wireplumber",
     "mpv",
     "gsettings-desktop-schemas",
     "eom",
@@ -233,16 +238,27 @@ pub const ARCH_BASE: &'static[&'static str] = &[
     "gnome-themes-extra",
     "ttf-jetbrains-mono-nerd",
     "ttf-jetbrains-mono",
-    "gcr",
+    "zathura",
+    "evince",
+    "webkit2gtk-4.1",
+    "networkmanager-openconnect",
+    "firefox",
+    "networkmanager",
+    "thunar",
+    "nm-connection-editor",
+];
+
+pub const ARCH_BASE: &'static[&'static str] = &[
+    "flatpak",
+    "fzf",
+    "tmux",
+    "zsh",
+    "nnn",
+    "neovim",
     "bash-completion",
     "zsh-completions",
-    "gcc",
     "less",
     "wget",
-    "pipewire-pulse",
-    "pipewire-alsa",
-    "wireplumber",
-    "cpupower",
     "git",
     "jq",
 ];
@@ -277,37 +293,37 @@ pub const ARCH_WAY: &'static[&'static str] = &[
 ];
 
 pub const ARCH_AWE: &'static[&'static str] = &[
-  "awesome",
+    "awesome",
 ];
 
 pub const ARCH_BSP: &'static[&'static str] = &[
-  "bspwm",
-  "polybar",
-  "sxhkd",
+    "bspwm",
+    "polybar",
+    "sxhkd",
 ];
 
 pub const ARCH_I3: &'static[&'static str] = &[
-  "i3",
-  "i3blocks",
+    "i3",
+    "i3blocks",
 ];
 
 
 pub const ARCH_HYPR: &'static[&'static str] = &[
-  "hyprland",
-  "waybar",
+    "hyprland",
+    "waybar",
 ];
 
 pub const ARCH_RIV: &'static[&'static str] = &[
-  "river",
-  "waybar",
+    "river",
+    "waybar",
 ];
 
 pub const ARCH_SWAY: &'static[&'static str] = &[
-  "sway",
-  "i3blocks",
+    "sway",
+    "i3blocks",
 ];
 
 pub const ARCH_NIR: &'static[&'static str] = &[
-  "niri",
-  "waybar",
+    "niri",
+    "waybar",
 ];

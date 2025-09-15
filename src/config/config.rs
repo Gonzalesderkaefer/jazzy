@@ -1,6 +1,7 @@
 use crate::machine::distro;
 use crate::machine::window_manager as wm;
 use crate::machine::dsp_server as display;
+use super::packages;
 
 
 /// This file defines all constants that are useful for main.rs

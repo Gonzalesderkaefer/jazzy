@@ -35,5 +35,5 @@ pub struct Distro {
     upgrade: &'static [&'static str],
 
     /// Required packages to use for a minimal install so that the tty works.
-    packages: &'static [&'static str],
+    packages: (&'static [&'static str]),
 }
