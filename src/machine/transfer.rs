@@ -3,6 +3,7 @@ use crate::menu::menu;
 
 
 
+/// Represents method of transfer
 #[derive(Debug)]
 pub enum Transfer {
     Link,
@@ -10,11 +11,13 @@ pub enum Transfer {
     None,
 }
 
+/// Implement Display for Transfer to get to_string()
 impl fmt::Display for Transfer {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         return write!(f, "{:?}", self);
     }
 }
+
 
 impl menu::MenuEntry for Transfer {
     fn menu_entry(&self) -> String {

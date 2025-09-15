@@ -1,17 +1,25 @@
 use crate::config::config;
+use super::window_manager as wm;
 use crate::menu::menu;
 use std::fmt;
 
 
-
+/// Implement display for DisplayServerId
 impl fmt::Display for config::DspServerId {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         return write!(f, "{:?}", self);
     }
 }
 
+/// Display server on which the window managers rely
 pub struct DspServer {
+    /// Id is stored as an enum
     id: config::DspServerId,
+
+    /// List of window managers, that work with this display server
+    supported_wms: &'static [&'static wm::WindowManager],
+
+    /// Packages required to install on the specific distro
     packages: [Option<&'static [&'static str]>; config::DistroId::Other as usize],
 }
 
