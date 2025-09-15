@@ -21,6 +21,22 @@ pub struct WindowManager {
 }
 
 
+
+impl WindowManager {
+    /// This function creates a new WindowManager. See [WindowManager] on info about
+    /// the arguments.
+    pub const fn new(
+            packages: [Option<&'static [&'static str]>; config::DistroId::Other as usize],
+            id: config::WindowManagerId, setup_callback: fn()) -> WindowManager{
+        return WindowManager {
+            packages: packages,
+            id: id,
+            setup_callback: setup_callback,
+        };
+    }
+}
+
+
 /// Implementation of Display for [CompositorId] to get `to_string()` for free
 impl fmt::Display for config::WindowManagerId {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

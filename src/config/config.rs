@@ -1,7 +1,7 @@
 use crate::machine::distro;
 use crate::machine::window_manager as wm;
 use crate::machine::dsp_server as display;
-use super::packages;
+use super::packages as pkg;
 
 
 /// This file defines all constants that are useful for main.rs
@@ -35,17 +35,6 @@ pub enum DspServerId {
     Tty,
 }
 
-/// Enum for the compositor
-/*
-#[derive(Debug)]
-pub enum CompositorId {
-    Sway,
-    Niri,
-    River,
-    Hyprland,
-}
-*/
-
 /// Enum for the window manager
 #[derive(Debug)]
 pub enum WindowManagerId {
@@ -58,8 +47,63 @@ pub enum WindowManagerId {
     Hyprland,
 }
 
+/// Window managers
+
+/// XORG
+pub const AWESOME_WM: wm::WindowManager = wm::WindowManager::new(
+//   Debian              Fedora              Arch Linux
+    [Some(pkg::DEB_AWE), Some(pkg::FED_AWE), Some(pkg::ARCH_AWE)], // Packages
+    WindowManagerId::Awesome,  // Id
+    || {} // callback
+);
 
 
+pub const BSPWM: wm::WindowManager = wm::WindowManager::new(
+//   Debian              Fedora              Arch Linux
+    [Some(pkg::DEB_BSP), Some(pkg::FED_BSP), Some(pkg::ARCH_BSP)], // Packages
+    WindowManagerId::Bspwm,  // Id
+    || {} // callback
+);
+
+
+pub const I3: wm::WindowManager = wm::WindowManager::new(
+//   Debian             Fedora             Arch Linux
+    [Some(pkg::DEB_I3), Some(pkg::FED_I3), Some(pkg::ARCH_I3)], // Packages
+    WindowManagerId::I3,  // Id
+    || {} // callback
+);
+
+/// WAYLAND
+pub const SWAY: wm::WindowManager = wm::WindowManager::new(
+//   Debian               Fedora               Arch Linux
+    [Some(pkg::DEB_SWAY), Some(pkg::FED_SWAY), Some(pkg::ARCH_SWAY)], // Packages
+    WindowManagerId::Sway,  // Id
+    || {} // callback
+);
+
+
+pub const NIRI: wm::WindowManager = wm::WindowManager::new(
+//   Debian Fedora               Arch Linux
+    [None,  Some(pkg::FED_NIR), Some(pkg::ARCH_NIR)], // Packages
+    WindowManagerId::Niri,  // Id
+    || {} // callback
+);
+
+
+pub const RIVER: wm::WindowManager = wm::WindowManager::new(
+//   Debian Fedora              Arch Linux
+    [None,  Some(pkg::FED_RIV), Some(pkg::ARCH_RIV)], // Packages
+    WindowManagerId::River,  // Id
+    || {} // callback
+);
+
+
+pub const HYPRLAND: wm::WindowManager = wm::WindowManager::new(
+//   Debian Fedora               Arch Linux
+    [None,  Some(pkg::FED_HYPR), Some(pkg::ARCH_HYPR)], // Packages
+    WindowManagerId::Hyprland,  // Id
+    || {} // callback
+);
 
 pub const DISTRO_ASSOC: &'static [(&distro::Distro /* Distro */, &'static str /* corresponding string as it would be found in '/etc/os-release' */)] = &[
 ];
