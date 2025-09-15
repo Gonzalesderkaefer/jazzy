@@ -42,7 +42,7 @@ pub const DEB_BASE: &'static[&'static str] = &[
 ];
 
 
-pub const DEB_XORG: &'static[&'static str] = &[
+pub const _DEB_XORG: &'static[&'static str] = &[
     "lxappearance",
     "maim",
     "rofi",
@@ -60,7 +60,7 @@ pub const DEB_XORG: &'static[&'static str] = &[
 ];
 
 
-pub const DEB_WAY: &'static[&'static str] = &[
+pub const __DEB_WAY: &'static[&'static str] = &[
     "grim",
     "swaylock",
     "wofi",
@@ -146,7 +146,7 @@ pub const FED_BASE: &'static[&'static str] = &[
 
 
 
-pub const FED_XORG: &'static[&'static str] = &[
+pub const _FED_XORG: &'static[&'static str] = &[
     "xclip",
     "@base-x",
     "maim",
@@ -164,7 +164,7 @@ pub const FED_XORG: &'static[&'static str] = &[
 
 
 
-pub const FED_WAY: &'static[&'static str] = &[
+pub const _FED_WAY: &'static[&'static str] = &[
     "grim",
     "swaybg",
     "swayidle",
@@ -265,7 +265,7 @@ pub const ARCH_BASE: &'static[&'static str] = &[
 
 
 
-pub const ARCH_XORG: &'static[&'static str] = &[
+pub const _ARCH_XORG: &'static[&'static str] = &[
     "xorg",
     "lxappearance",
     "xwallpaper",
@@ -280,7 +280,7 @@ pub const ARCH_XORG: &'static[&'static str] = &[
 ];
 
 
-pub const ARCH_WAY: &'static[&'static str] = &[
+pub const _ARCH_WAY: &'static[&'static str] = &[
     "grim",
     "wofi",
     "swaybg",
