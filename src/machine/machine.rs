@@ -10,17 +10,17 @@ use super::transfer;
 /// on. This type is built while this program runs.
 struct Machine {
     /// The distro of this machine.
-    distro: distro::Distro,
+    pub distro: distro::Distro,
 
     /// The display server that is intened to be used.
-    display_server: dsp_server::DspServer,
+    pub display_server: dsp_server::DspServer,
 
     /// The window manager that is intended to be used
-    gui: Option<wm::WindowManager>,
+    pub gui: Option<wm::WindowManager>,
 
     /// Method of transfer for the config files and custom scripts
-    transfer: transfer::Transfer,
+    pub transfer: transfer::Transfer,
 
     /// All packages that need to be installed for this install.
-    all_packages: Vec<&'static str>,
+    pub all_packages: Vec<&'static str>,
 }

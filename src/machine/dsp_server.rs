@@ -14,13 +14,17 @@ impl fmt::Display for config::DspServerId {
 /// Display server on which the window managers rely
 pub struct DspServer {
     /// Id is stored as an enum
-    id: config::DspServerId,
+    pub id: config::DspServerId,
 
     /// List of window managers, that work with this display server
-    supported_wms: &'static [&'static wm::WindowManager],
+    pub supported_wms: &'static [&'static wm::WindowManager],
 
     /// Packages required to install on the specific distro
-    packages: [Option<&'static [&'static str]>; config::DistroId::Other as usize],
+    pub packages: [Option<&'static [&'static str]>; config::DistroId::Other as usize],
+
+    /// Setup callback
+    pub setup_callback: fn(),
+
 }
 
 

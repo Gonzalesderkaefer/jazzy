@@ -105,5 +105,42 @@ pub const HYPRLAND: wm::WindowManager = wm::WindowManager::new(
     || {} // callback
 );
 
+
+/// Display servers
+pub const XORG: display::DspServer = display::DspServer {
+    id: DspServerId::Xorg,
+    supported_wms: &[&AWESOME_WM, &BSPWM, &I3],
+    setup_callback: || {},
+    packages: [Some(pkg::DEB_XORG), Some(pkg::FED_XORG), Some(pkg::ARCH_XORG)],
+};
+
+pub const WAYLAND: display::DspServer = display::DspServer {
+    id: DspServerId::Wayland,
+    supported_wms: &[&SWAY, &NIRI, &RIVER, &HYPRLAND],
+    setup_callback: || {},
+    packages: [Some(pkg::DEB_XORG), Some(pkg::FED_XORG), Some(pkg::ARCH_XORG)],
+};
+
+pub const TTY: display::DspServer = display::DspServer {
+    id: DspServerId::Tty,
+    supported_wms: &[],
+    setup_callback: || {},
+    packages: [None, None, None],
+};
+
+
+/// Distros
+pub const DEBIAN: distro::Distro = distro::Distro {
+    id: DistroId::Debian,
+    supported_dsp_serv: [Some(&XORG),Some(&WAYLAND)],
+    supported_wms: [Some(&[&AWESOME_WM, &BSPWM, &I3]), Some(&[&SWAY])],
+    install: &["apt", "install", "-y"],
+    install_suffix: None,
+    update: &["apt", "update", "-y"],
+    upgrade: &["apt", "upgrade", "-y"],
+    packages: pkg::DEB_BASE,
+
+};
+
 pub const DISTRO_ASSOC: &'static [(&distro::Distro /* Distro */, &'static str /* corresponding string as it would be found in '/etc/os-release' */)] = &[
 ];
