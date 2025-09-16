@@ -139,8 +139,33 @@ pub const DEBIAN: distro::Distro = distro::Distro {
     update: &["apt", "update", "-y"],
     upgrade: &["apt", "upgrade", "-y"],
     packages: pkg::DEB_BASE,
-
 };
 
-pub const DISTRO_ASSOC: &'static [(&distro::Distro /* Distro */, &'static str /* corresponding string as it would be found in '/etc/os-release' */)] = &[
+pub const FEDORA: distro::Distro = distro::Distro {
+    id: DistroId::Fedora,
+    supported_dsp_serv: [Some(&XORG),Some(&WAYLAND)],
+    supported_wms: [Some(&[&AWESOME_WM, &BSPWM, &I3]), Some(&[&SWAY, &NIRI, &RIVER, &HYPRLAND])],
+    install: &["dnf", "install", "-y"],
+    install_suffix: None,
+    update: &["dnf", "upgrade", "--refresh"],
+    upgrade: &["dnf", "update", "-y"],
+    packages: pkg::FED_BASE,
+};
+
+pub const ARCH_LINUX: distro::Distro = distro::Distro {
+    id: DistroId::Arch,
+    supported_dsp_serv: [Some(&XORG),Some(&WAYLAND)],
+    supported_wms: [Some(&[&AWESOME_WM, &BSPWM, &I3]), Some(&[&SWAY, &NIRI, &RIVER, &HYPRLAND])],
+    install: &["pacman", "-Syu"],
+    install_suffix: Some(&["--noconfirm", "--needed"]),
+    update: &["pacman", "-Sy", "--noconfirm", "--needed"],
+    upgrade: &["pacman", "-Syu", "--noconfirm", "--needed"],
+    packages: pkg::ARCH_BASE,
+};
+
+
+pub const DISTRO_ASSOC: &'static [(&distro::Distro /* Distro */, &'static str /* corresponding string in '/etc/os-release' */)] = &[
+    (&DEBIAN, "Debian"),
+    (&FEDORA, "Fedora"),
+    (&ARCH_LINUX, "Arch Linux"),
 ];
