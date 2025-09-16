@@ -10,31 +10,18 @@ use std::fmt;
 /// `WindowManager` is used to define a window manager. These are defined in 'src/config/config.rs'
 pub struct WindowManager {
     /// Name of this window manager. It's an enum so that is defined in 'src/config/config.rs'
-    id: config::WindowManagerId,
+    pub id: config::WindowManagerId,
 
     /// Packages needed for this Compositor, the index is the DistroId if 
     /// an entry is [None] It means the Compositor is not supported for that [Distro]
-    packages: [Option<&'static [&'static str]>; config::DistroId::Other as usize],
+    pub packages: [Option<&'static [&'static str]>; config::DistroId::Other as usize],
 
     /// Function that is called after installing this window manager
-    setup_callback: fn(),
+    pub setup_callback: fn(),
 }
 
 
 
-impl WindowManager {
-    /// This function creates a new WindowManager. See [WindowManager] on info about
-    /// the arguments.
-    pub const fn new(
-            packages: [Option<&'static [&'static str]>; config::DistroId::Other as usize],
-            id: config::WindowManagerId, setup_callback: fn()) -> WindowManager{
-        return WindowManager {
-            packages: packages,
-            id: id,
-            setup_callback: setup_callback,
-        };
-    }
-}
 
 
 /// Implementation of Display for [CompositorId] to get `to_string()` for free
