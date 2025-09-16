@@ -50,60 +50,61 @@ pub enum WindowManagerId {
 /// Window managers
 
 /// XORG
-pub const AWESOME_WM: wm::WindowManager = wm::WindowManager::new(
-//   Debian              Fedora              Arch Linux
-    [Some(pkg::DEB_AWE), Some(pkg::FED_AWE), Some(pkg::ARCH_AWE)], // Packages
-    WindowManagerId::Awesome,  // Id
-    || {} // callback
-);
+pub const AWESOME_WM: wm::WindowManager = wm::WindowManager {
+    id: WindowManagerId::Awesome,  // Id
+//             Debian              Fedora              Arch Linux
+    packages: [Some(pkg::DEB_AWE), Some(pkg::FED_AWE), Some(pkg::ARCH_AWE)], // Packages
+    setup_callback: || {} // callback
+};
 
 
-pub const BSPWM: wm::WindowManager = wm::WindowManager::new(
-//   Debian              Fedora              Arch Linux
-    [Some(pkg::DEB_BSP), Some(pkg::FED_BSP), Some(pkg::ARCH_BSP)], // Packages
-    WindowManagerId::Bspwm,  // Id
-    || {} // callback
-);
+pub const BSPWM: wm::WindowManager = wm::WindowManager {
+    id: WindowManagerId::Bspwm,  // Id
+//             Debian              Fedora              Arch Linux
+    packages: [Some(pkg::DEB_BSP), Some(pkg::FED_BSP), Some(pkg::ARCH_BSP)], // Packages
+    setup_callback: || {} // callback
+};
 
 
-pub const I3: wm::WindowManager = wm::WindowManager::new(
-//   Debian             Fedora             Arch Linux
-    [Some(pkg::DEB_I3), Some(pkg::FED_I3), Some(pkg::ARCH_I3)], // Packages
-    WindowManagerId::I3,  // Id
-    || {} // callback
-);
+pub const I3: wm::WindowManager = wm::WindowManager {
+    id: WindowManagerId::I3,  // Id
+//             Debian             Fedora             Arch Linux
+    packages: [Some(pkg::DEB_I3), Some(pkg::FED_I3), Some(pkg::ARCH_I3)], // Packages
+    setup_callback: || {} // callback
+};
+
 
 /// WAYLAND
-pub const SWAY: wm::WindowManager = wm::WindowManager::new(
-//   Debian               Fedora               Arch Linux
-    [Some(pkg::DEB_SWAY), Some(pkg::FED_SWAY), Some(pkg::ARCH_SWAY)], // Packages
-    WindowManagerId::Sway,  // Id
-    || {} // callback
-);
+pub const SWAY: wm::WindowManager = wm::WindowManager {
+    id: WindowManagerId::Sway,  // Id
+//             Debian               Fedora               Arch Linux
+    packages: [Some(pkg::DEB_SWAY), Some(pkg::FED_SWAY), Some(pkg::ARCH_SWAY)], // Packages
+    setup_callback: || {} // callback
+};
 
 
-pub const NIRI: wm::WindowManager = wm::WindowManager::new(
-//   Debian Fedora               Arch Linux
-    [None,  Some(pkg::FED_NIR), Some(pkg::ARCH_NIR)], // Packages
-    WindowManagerId::Niri,  // Id
-    || {} // callback
-);
+pub const NIRI: wm::WindowManager = wm::WindowManager {
+    id: WindowManagerId::Niri,  // Id
+//             Debian Fedora               Arch Linux
+    packages: [None,  Some(pkg::FED_NIR), Some(pkg::ARCH_NIR)], // Packages
+    setup_callback: || {} // callback
+};
 
 
-pub const RIVER: wm::WindowManager = wm::WindowManager::new(
-//   Debian Fedora              Arch Linux
-    [None,  Some(pkg::FED_RIV), Some(pkg::ARCH_RIV)], // Packages
-    WindowManagerId::River,  // Id
-    || {} // callback
-);
+pub const RIVER: wm::WindowManager = wm::WindowManager {
+    id: WindowManagerId::River,  // Id
+//             Debian Fedora              Arch Linux
+    packages: [None,  Some(pkg::FED_RIV), Some(pkg::ARCH_RIV)], // Packages
+    setup_callback: || {} // callback
+};
 
 
-pub const HYPRLAND: wm::WindowManager = wm::WindowManager::new(
-//   Debian Fedora               Arch Linux
-    [None,  Some(pkg::FED_HYPR), Some(pkg::ARCH_HYPR)], // Packages
-    WindowManagerId::Hyprland,  // Id
-    || {} // callback
-);
+pub const HYPRLAND: wm::WindowManager = wm::WindowManager {
+    id: WindowManagerId::Hyprland,  // Id
+//             Debian Fedora               Arch Linux
+    packages: [None,  Some(pkg::FED_HYPR), Some(pkg::ARCH_HYPR)], // Packages
+    setup_callback: || {} // callback
+};
 
 
 /// Display servers
@@ -164,7 +165,7 @@ pub const ARCH_LINUX: distro::Distro = distro::Distro {
 };
 
 
-pub const DISTRO_ASSOC: &'static [(&distro::Distro /* Distro */, &'static str /* corresponding string in '/etc/os-release' */)] = &[
+pub const DISTRO_ASSOC: &'static [(&distro::Distro /* Distro */, &'static str /* string in '/etc/os-release' */)] = &[
     (&DEBIAN, "Debian"),
     (&FEDORA, "Fedora"),
     (&ARCH_LINUX, "Arch Linux"),
