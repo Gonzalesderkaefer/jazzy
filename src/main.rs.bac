@@ -1,4 +1,7 @@
 #![allow(unused_imports)]
+
+
+
 use std::io;
 use color_eyre::owo_colors::Style;
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
@@ -14,35 +17,40 @@ use ratatui::{
 };
 
 
-
-
-
-fn main() -> Result<(), io::Error>{
-    let mut terminal = ratatui::init();
-    let app_result = FrameCountWidget::default().run(&mut terminal);
-    ratatui::restore();
-    return app_result;
+#[derive(Default)]
+pub struct ScreenState {
+    list_state: ListState,
 }
-
-
 
 
 #[derive(Default)]
-struct FrameCountWidget {
+pub struct SelectionScreen {
     exit: bool,
-    counter: i32,
+    state:ScreenState,
+}
+
+fn main() -> io::Result<()> {
+    let mut terminal = ratatui::init();
+    let app_result = SelectionScreen::default().run(&mut terminal);
+    ratatui::restore();
+    app_result
 }
 
 
-impl FrameCountWidget {
+
+impl SelectionScreen {
+    /// runs the application's main loop until the user quits
     pub fn run(&mut self, terminal: &mut DefaultTerminal) -> io::Result<()> {
         while !self.exit {
-            let _ = terminal.draw( |frame| self.draw(frame));
+            terminal.draw(|frame| self.draw(frame))?;
             self.handle_events()?;
         }
         Ok(())
     }
 
+    pub fn draw(&self, frame: &mut Frame) {
+        frame.render_widget(self, frame.area());
+    }
 
     /// updates the application's state based on user input
     fn handle_events(&mut self) -> io::Result<()> {
@@ -60,8 +68,6 @@ impl FrameCountWidget {
     fn handle_key_event(&mut self, key_event: KeyEvent) {
         match key_event.code {
             KeyCode::Char('q') => self.exit = true,
-            KeyCode::Char('k') => self.counter += 1,
-            KeyCode::Char('j') => self.counter -= 1,
             _ => {}
         }
     }
@@ -69,28 +75,40 @@ impl FrameCountWidget {
 
 
 
-    pub fn draw(&mut self, frame: &mut Frame) {
-        let mut i = self.counter;
-        frame.render_stateful_widget(self, frame.area(), &mut i);
-    }
 }
 
 
-impl StatefulWidget for &mut FrameCountWidget {
-    type State = i32;
+impl StatefulWidget for &SelectionScreen {
+    type State = ScreenState;
 
-    fn render(self, area: Rect, buf: &mut Buffer, state: &mut i32) {
-        //*state += 1;
-        let text = format!("Frame count: {state}");
-        let title = Line::from(text);
+
+    fn render(self, area: Rect, buf: &mut Buffer, state: &mut ScreenState) {
+
+        let title = Line::from(" Window ".bold());
+
+        let instructions = Line::from(vec![
+            " Navigate with  ".into(),
+            "<H, J, K, L>".blue().bold(),
+            " or ".into(),
+            "<Up, Right, Left, Down>".blue().bold(),
+            " Quit ".into(),
+            "<Q> ".blue().bold(),
+        ]);
+
 
         let block = Block::bordered()
             .title(title.centered())
-            .border_set(border::THICK)
-            .render(area, buf);
+            .title_bottom(instructions.centered())
+            .border_set(border::THICK);
+
+        let list = List::new([
+            "Item 1", "Item 2",
+        ]).highlight_symbol(">").block(block).render(area, buf, &self);
+
 
 
 
     }
 }
+
 
