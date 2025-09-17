@@ -1,86 +1,54 @@
 
-// Create modules
-mod config;
-mod utils;
-mod machine;
-mod menu;
-
-
-// Remove these later:
-use utils::fileutils as fu;
-use config::packages as pkg;
-
-
-
-pub const ARR: &[&'static str] = &[
-    "Davey,"
-];
-
-pub const ARR1: &[&'static str] = &[
-    "how",
-    "you",
-    "doin'?",
-];
-
-
-
-
-// macro_rules! concat {
-//     (&[$ty:ty]: $($s:expr),+) => {{
-//         const LEN: usize = $( $s.len() + )* 0;
-//         const ARR: [$ty; LEN] = {
-//             let mut arr: [$ty; LEN] = [""; LEN];
-//             let mut base: usize = 0;
-//             $({
-//                 let mut i = 0;
-//                 while i < $s.len() {
-//                     arr[base + i] = $s[i];
-//                     i += 1;
-//                 }
-//                 base += $s.len();
-//             })*
-//             if base != LEN { panic!("invalid length"); }
-//             arr
-//         };
-//         &ARR
-//     }}
-// }
-
-
-
-
-// macro_rules! concat {
-//     (&[$ty:ty]: $($s:expr),+) => {{
-//         const LEN: usize = $( $s.len() + )* 0;
-//         const ARR: [$ty; LEN] = {
-//             let mut arr: [$ty; LEN] = [""; LEN];
-//             let mut base: usize = 0;
-//             $({
-//                 let mut i = 0;
-//                 while i < $s.len() {
-//                     arr[base + i] = $s[i];
-//                     i += 1;
-//                 }
-//                 base += $s.len();
-//             })*
-//             if base != LEN { panic!("invalid length"); }
-//             arr
-//         };
-//         &ARR
-//     }}
-// }
-
-
-
-pub const C: &'static [&'static str] = concat_packages!(&[&str]: config::packages::DEB_GUI, config::packages::_DEB_XORG);
+#[allow(unused_imports)]
+use std::io;
+#[allow(unused_imports)]
+use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
+#[allow(unused_imports)]
+use ratatui::{
+    buffer::Buffer,
+    layout::Rect,
+    style::Stylize,
+    symbols::border,
+    text::{Line, Text},
+    widgets::{Block, Paragraph, Widget},
+    DefaultTerminal, Frame,
+};
 
 
 
 
 
-fn main() {
-    for s in C {
-        println!("{s}");
+pub struct SelectionScreen {
+    selected: u8, // Index that is selected
+    choices: Vec<String>,
+}
+
+
+
+impl Widget for &SelectionScreen {
+    fn render(self, area: Rect, buf: &mut Buffer) {
+
+        let title = Line::from(" Window ".bold());
+
+        let instructions = Line::from(vec![
+            " Navigate with  ".into(),
+            "<H, J, K, L>".blue().bold(),
+            " or ".into(),
+            "<Up, Right, Left, Down>".blue().bold(),
+            " Quit ".into(),
+            "<Q> ".blue().bold(),
+        ]);
+
+
+        let block = Block::bordered()
+            .title(title.centered())
+            .title_bottom(instructions.centered())
+            .border_set(border::THICK);
+
     }
+}
 
+
+fn main() -> io::Result<()> {
+    return Ok(());
 }
