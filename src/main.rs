@@ -31,6 +31,7 @@ fn main() -> Result<(), io::Error>{
 struct FrameCountWidget {
     exit: bool,
     counter: i32,
+    list_state: ListState,
 }
 
 
@@ -60,8 +61,14 @@ impl FrameCountWidget {
     fn handle_key_event(&mut self, key_event: KeyEvent) {
         match key_event.code {
             KeyCode::Char('q') => self.exit = true,
-            KeyCode::Char('k') => self.counter += 1,
-            KeyCode::Char('j') => self.counter -= 1,
+            KeyCode::Char('k') => match self.list_state.selected_mut() {
+                Some(index) => *self.list_state.selected_mut() = Some(*index - 1),
+                None => *self.list_state.selected_mut() = Some(0),
+            },
+            KeyCode::Char('j') => match self.list_state.selected_mut() {
+                Some(index) => *self.list_state.selected_mut() = Some(*index + 1),
+                None => *self.list_state.selected_mut() = Some(0),
+            },
             _ => {}
         }
     }
@@ -84,13 +91,23 @@ impl StatefulWidget for &mut FrameCountWidget {
         let text = format!("Frame count: {state}");
         let title = Line::from(text);
 
+        let [mid_x, mid_y] = [area.width / 2 - area.width / 8, area.height / 2 - area.height / 8];
+
+        let cool_area = Rect {
+            x: mid_x,
+            y: mid_y,
+            width: area.width / 4,
+            height: area.height / 4,
+        };
+
+
         let block = Block::bordered()
             .title(title.centered())
-            .border_set(border::THICK)
-            .render(area, buf);
+            .border_set(border::ROUNDED);
 
+        let list = List::new(["First Item","Second Item"]).block(block).highlight_symbol(">");
 
-
+        StatefulWidget::render(list, cool_area, buf, &mut self.list_state);
     }
 }
 
