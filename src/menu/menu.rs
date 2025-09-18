@@ -16,11 +16,29 @@ use ratatui::{
 };
 
 
-
 /// NOTE: Might have to introduce another lifetime
 pub fn print_menu<'a, Q: Into<ListItem<'a>>>(prompt: &str, choices: &'a [&'a Q]) -> io::Result<&'a Q> {
     todo!()
 }
+
+
+
+
+
+/// Represesnts a selection screen
+pub struct SelectionScreen<'a> {
+    /// If this is set to true the widget stops
+    should_exit: bool,
+
+    /// Choices that will be displayed
+    choices: &'a [&'a ListItem<'a>],
+
+    /// State of the internal List
+    list_state: ListState,
+}
+
+
+
 
 
 
