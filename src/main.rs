@@ -1,7 +1,8 @@
 #![allow(unused_imports)]
 use std::io;
-use color_eyre::owo_colors::Style;
+//use color_eyre::owo_colors::Style;
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
+use ratatui::style::{self, Color};
 use ratatui::widgets::{List, ListState, StatefulWidget};
 use ratatui::{
     buffer::Buffer,
@@ -88,8 +89,14 @@ impl StatefulWidget for &mut FrameCountWidget {
 
     fn render(self, area: Rect, buf: &mut Buffer, state: &mut i32) {
         //*state += 1;
-        let text = format!("Frame count: {state}");
-        let title = Line::from(text);
+        let text = format!(" Example Title ");
+        let title = Line::from(text).style(
+            style::Style::default()
+            .fg(Color::Magenta)
+        );
+
+
+
 
         let [mid_x, mid_y] = [area.width / 2 - area.width / 8, area.height / 2 - area.height / 8];
 
