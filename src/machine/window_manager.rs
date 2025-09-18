@@ -1,6 +1,9 @@
 use crate::menu::menu;
 use crate::config::config;
+
+
 use std::fmt;
+use ratatui::widgets::{ ListItem };
 
 
 
@@ -31,16 +34,9 @@ impl fmt::Display for config::WindowManagerId {
     }
 }
 
-/// Implementation of [MenuEntry] for creating menu-pages
-impl menu::MenuEntry for WindowManager {
-    fn menu_entry(&self) -> String {
-        // Store id as string
-        let mut self_as_string = self.id.to_string();
-
-        // Insert square brackets
-        self_as_string.insert(0, '[');
-        self_as_string.insert(2, ']');
-
-        return self_as_string;
+/// This is for ratatui
+impl<'a> Into<ListItem<'a>> for config::WindowManagerId {
+    fn into(self) -> ListItem<'a> {
+        return ListItem::new(self.to_string());
     }
 }

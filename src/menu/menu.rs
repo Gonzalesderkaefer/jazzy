@@ -1,10 +1,24 @@
-use std::io;
 use crate::FgColor;
 
 
+use std::io;
+use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
+use ratatui::style::{self, Color};
+use ratatui::widgets::{List, ListState, StatefulWidget, ListItem};
+use ratatui::{
+    buffer::Buffer,
+    layout::Rect,
+    style::Stylize,
+    symbols::border,
+    text::{Line, Text},
+    widgets::{Block, Paragraph, Widget},
+    DefaultTerminal, Frame,
+};
 
 
-pub fn print_menu<'a, Q: MenuEntry>(prompt: &str, choices: &'a [Option<&'a Q>]) -> io::Result<&'a Q> {
+
+/// NOTE: Might have to introduce another lifetime
+pub fn print_menu<'a, Q: Into<ListItem<'a>>>(prompt: &str, choices: &'a [&'a Q]) -> io::Result<&'a Q> {
     todo!()
 }
 

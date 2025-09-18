@@ -1,6 +1,7 @@
-use std::fmt;
 use crate::menu::menu;
 
+use std::fmt;
+use ratatui::widgets::{ ListItem };
 
 
 /// Represents method of transfer
@@ -18,6 +19,12 @@ impl fmt::Display for Transfer {
     }
 }
 
+/// This is for ratatui
+impl<'a> Into<ListItem<'a>> for Transfer {
+    fn into(self) -> ListItem<'a> {
+        return ListItem::new(self.to_string());
+    }
+}
 
 impl menu::MenuEntry for Transfer {
     fn menu_entry(&self) -> String {

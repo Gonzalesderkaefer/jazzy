@@ -1,6 +1,15 @@
 #![allow(unused_imports)]
+
+
+
+mod machine;
+mod menu;
+mod config;
+mod utils;
+
+
+
 use std::io;
-//use color_eyre::owo_colors::Style;
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::style::{self, Color};
 use ratatui::widgets::{List, ListState, StatefulWidget};
