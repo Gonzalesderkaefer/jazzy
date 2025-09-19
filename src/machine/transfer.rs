@@ -5,7 +5,7 @@ use ratatui::widgets::{ ListItem };
 
 
 /// Represents method of transfer
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Transfer {
     Link,
     Copy,

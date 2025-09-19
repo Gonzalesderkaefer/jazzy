@@ -20,11 +20,12 @@ use ratatui::{
 
 
 /// NOTE: Might have to introduce another lifetime
-pub fn print_menu<'a>(prompt: &'a str, choices: Vec<ListItem<'a>>) /* -> io::Result<&'a Q> */ {
+pub fn print_menu<'a, Q: Into<ListItem<'a>> + Clone>(prompt: &'a str, choices: Vec<Q>) -> io::Result<Q> {
     let mut terminal = ratatui::init();
     let mut new_select = SelectionScreen::new(choices, prompt);
-    new_select.run(&mut terminal);
+    new_select.run(&mut terminal)?;
     ratatui::restore();
+    return Ok(new_select.final_choice.clone());
 }
 
 
@@ -33,27 +34,32 @@ pub fn print_menu<'a>(prompt: &'a str, choices: Vec<ListItem<'a>>) /* -> io::Res
 
 /// Represesnts a selection screen
 /// NOTE: Might have to introduce other lifetimes
-pub struct SelectionScreen<'a> {
+pub struct SelectionScreen<'a, Q: Into<ListItem<'a>> + Clone> {
     /// If this is set to true the widget stops
     should_exit: bool,
 
     /// Choices that will be displayed
-    choices: Vec<ListItem<'a>>,
+    choices: Vec<Q>,
+
+    /// The end choice of the user
+    final_choice: Q,
 
     /// State of the internal List
     list_state: ListState,
+
 
     /// Title of this screen
     title: &'a str,
 }
 
-impl<'a> SelectionScreen<'a> {
+impl<'a, Q: Into<ListItem<'a>> + Clone> SelectionScreen<'a, Q> {
     /// Creates a new SelectionScreen
-    fn new(choices: Vec<ListItem<'a>>, title: &'a str) -> Self {
+    fn new(choices: Vec<Q>, title: &'a str) -> Self {
         return Self {
             should_exit: false,
-            choices: choices,
             list_state: ListState::default().with_selected(Some(0)),
+            final_choice: (&choices[0]).clone(),
+            choices: choices,
             title: title,
         };
     }
@@ -61,7 +67,7 @@ impl<'a> SelectionScreen<'a> {
     /// Start the displayed widget
     fn run(&mut self, terminal: &mut DefaultTerminal) -> io::Result<()>  {
         while !self.should_exit {
-            let _ = terminal.draw( |frame| self.draw(frame))?;
+            terminal.draw( |frame| self.draw(frame))?;
             self.handle_events()?;
         }
         return Ok(());
@@ -83,7 +89,24 @@ impl<'a> SelectionScreen<'a> {
 
     fn handle_key_event(&mut self, key_event: KeyEvent) {
         match key_event.code {
-            KeyCode::Char('q') => self.should_exit = true,
+            KeyCode::Enter => { 
+                // Get current selected entry
+                match self.list_state.selected() {
+                    Some(size) => {
+                        // Check if index is within boundes
+                        if size < self.choices.len() {
+                            self.final_choice = (&self.choices[size]).clone()
+                        } else {
+                            self.final_choice = (&self.choices[0]).clone()
+                        }
+                    }
+                    None => todo!(),
+                }
+                self.should_exit = true;
+            },
+            KeyCode::Char('q') => { 
+                self.should_exit = true;
+            },
             KeyCode::Char('k') => match self.list_state.selected_mut() {
                 Some(index) => *self.list_state.selected_mut() = Some(*index - 1),
                 None => *self.list_state.selected_mut() = Some(0),
@@ -106,7 +129,7 @@ impl<'a> SelectionScreen<'a> {
 
 
 
-impl<'a> Widget for &mut SelectionScreen<'a> {
+impl<'a, Q: Into<ListItem<'a>> + Clone> Widget for &mut SelectionScreen<'a, Q> {
     fn render(self, area: Rect, buf: &mut Buffer) {
 
         // Create a title for the window
@@ -116,11 +139,21 @@ impl<'a> Widget for &mut SelectionScreen<'a> {
             .add_modifier(Modifier::BOLD)
         );
 
+        // dimensions for the centered block
+        let centered_width = area.width / 4;
+        let centered_height = area.height / 4;
+
+        // Top left corner
+        let centered_x = area.width / 2 - centered_width / 2;
+        let centered_y = area.height / 2 - centered_height / 2;
+
+
+
+
         // Create a rect that is centered
-        let [mid_x, mid_y] = [area.width / 2 - area.width / 8, area.height / 2 - area.height / 8];
         let cool_area = Rect {
-            x: mid_x,
-            y: mid_y,
+            x: centered_x,
+            y: centered_y,
             width: area.width / 4,
             height: area.height / 4,
         };
@@ -130,10 +163,7 @@ impl<'a> Widget for &mut SelectionScreen<'a> {
             .title(title.centered())
             .border_set(border::ROUNDED);
 
-        // NOTE: This is just a placeholder 
         let list = List::new(self.choices.clone()).block(block).highlight_symbol(">");
-
-
 
         // Finally render the widget
         StatefulWidget::render(list, cool_area, buf, &mut self.list_state);

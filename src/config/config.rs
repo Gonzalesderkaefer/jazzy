@@ -19,7 +19,7 @@ pub static BINDEST: &'static str = ".local/bin/";
 
 
 /// Enum for the distroid
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum DistroId {
     Debian,
     Fedora,
@@ -28,7 +28,7 @@ pub enum DistroId {
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum DspServerId {
     Xorg,
     Wayland,
@@ -36,7 +36,7 @@ pub enum DspServerId {
 }
 
 /// Enum for the window manager
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum WindowManagerId {
     Awesome,
     Bspwm,

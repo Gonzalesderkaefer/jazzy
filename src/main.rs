@@ -27,8 +27,10 @@ use ratatui::{
 
 
 
-fn main(){
-    menu::menu::print_menu(" Hello ", vec![config::config::WindowManagerId::Sway.into(), config::config::WindowManagerId::Hyprland.into()]);
+fn main() -> io::Result<()>{
+     let wm = menu::menu::print_menu(" Hello ", vec![config::config::WindowManagerId::Sway, config::config::WindowManagerId::Hyprland])?;
+     println!("{wm}");
+     return Ok(());
 }
 
 
