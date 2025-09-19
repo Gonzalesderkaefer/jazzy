@@ -1,3 +1,4 @@
+use crate::config::config;
 use crate::FgColor;
 
 
@@ -19,7 +20,7 @@ use ratatui::{
 
 
 /// NOTE: Might have to introduce another lifetime
-pub fn print_menu<'a, Q: Into<ListItem<'a>>>(prompt: &'a str, choices: &'a [Q]) /* -> io::Result<&'a Q> */ {
+pub fn print_menu<'a>(prompt: &'a str, choices: Vec<ListItem<'a>>) /* -> io::Result<&'a Q> */ {
     let mut terminal = ratatui::init();
     let mut new_select = SelectionScreen::new(choices, prompt);
     new_select.run(&mut terminal);
@@ -32,12 +33,12 @@ pub fn print_menu<'a, Q: Into<ListItem<'a>>>(prompt: &'a str, choices: &'a [Q]) 
 
 /// Represesnts a selection screen
 /// NOTE: Might have to introduce other lifetimes
-pub struct SelectionScreen<'a, Q: Into<ListItem<'a>>> {
+pub struct SelectionScreen<'a> {
     /// If this is set to true the widget stops
     should_exit: bool,
 
     /// Choices that will be displayed
-    choices: &'a [Q],
+    choices: Vec<ListItem<'a>>,
 
     /// State of the internal List
     list_state: ListState,
@@ -46,9 +47,9 @@ pub struct SelectionScreen<'a, Q: Into<ListItem<'a>>> {
     title: &'a str,
 }
 
-impl<'a, Q: Into<ListItem<'a>>> SelectionScreen<'a, Q> {
+impl<'a> SelectionScreen<'a> {
     /// Creates a new SelectionScreen
-    fn new(choices: &'a [Q], title: &'a str) -> Self {
+    fn new(choices: Vec<ListItem<'a>>, title: &'a str) -> Self {
         return Self {
             should_exit: false,
             choices: choices,
@@ -58,11 +59,12 @@ impl<'a, Q: Into<ListItem<'a>>> SelectionScreen<'a, Q> {
     }
 
     /// Start the displayed widget
-    fn run(&mut self, terminal: &mut DefaultTerminal) /* -> io::Result<()> */ {
+    fn run(&mut self, terminal: &mut DefaultTerminal) -> io::Result<()>  {
         while !self.should_exit {
-            let _ = terminal.draw( |frame| self.draw(frame));
-            self.handle_events();
+            let _ = terminal.draw( |frame| self.draw(frame))?;
+            self.handle_events()?;
         }
+        return Ok(());
     }
 
 
@@ -82,6 +84,14 @@ impl<'a, Q: Into<ListItem<'a>>> SelectionScreen<'a, Q> {
     fn handle_key_event(&mut self, key_event: KeyEvent) {
         match key_event.code {
             KeyCode::Char('q') => self.should_exit = true,
+            KeyCode::Char('k') => match self.list_state.selected_mut() {
+                Some(index) => *self.list_state.selected_mut() = Some(*index - 1),
+                None => *self.list_state.selected_mut() = Some(0),
+            },
+            KeyCode::Char('j') => match self.list_state.selected_mut() {
+                Some(index) => *self.list_state.selected_mut() = Some(*index + 1),
+                None => *self.list_state.selected_mut() = Some(0),
+            },
             _ => {}
         }
     }
@@ -96,7 +106,7 @@ impl<'a, Q: Into<ListItem<'a>>> SelectionScreen<'a, Q> {
 
 
 
-impl<'a, Q: Into<ListItem<'a>>> Widget for &mut SelectionScreen<'a, Q> {
+impl<'a> Widget for &mut SelectionScreen<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
 
         // Create a title for the window
@@ -120,10 +130,13 @@ impl<'a, Q: Into<ListItem<'a>>> Widget for &mut SelectionScreen<'a, Q> {
             .title(title.centered())
             .border_set(border::ROUNDED);
 
+        // NOTE: This is just a placeholder 
+        let list = List::new(self.choices.clone()).block(block).highlight_symbol(">");
+
 
 
         // Finally render the widget
-        Widget::render(block, cool_area, buf);
+        StatefulWidget::render(list, cool_area, buf, &mut self.list_state);
     }
 }
 
