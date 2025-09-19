@@ -12,7 +12,7 @@ mod utils;
 use std::io;
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::style::{self, Color};
-use ratatui::widgets::{List, ListState, StatefulWidget};
+use ratatui::widgets::{List, ListState, StatefulWidget, ListItem};
 use ratatui::{
     buffer::Buffer,
     layout::Rect,
@@ -27,11 +27,8 @@ use ratatui::{
 
 
 
-fn main() -> Result<(), io::Error>{
-    let mut terminal = ratatui::init();
-    let app_result = FrameCountWidget::default().run(&mut terminal);
-    ratatui::restore();
-    return app_result;
+fn main(){
+    menu::menu::print_menu("Hello", &["world"]);
 }
 
 

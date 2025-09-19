@@ -20,9 +20,9 @@ impl fmt::Display for Transfer {
 }
 
 /// This is for ratatui
-impl<'a> Into<ListItem<'a>> for Transfer {
-    fn into(self) -> ListItem<'a> {
-        return ListItem::new(self.to_string());
+impl<'a> From<Transfer> for ListItem<'a> {
+    fn from(value: Transfer) -> Self {
+        return Self::new(value.to_string());
     }
 }
 
