@@ -19,13 +19,12 @@ use ratatui::{
 };
 
 
-/// NOTE: Might have to introduce another lifetime
 pub fn print_menu<'a, Q: Into<ListItem<'a>> + Clone>(prompt: &'a str, choices: Vec<Q>) -> io::Result<Q> {
     let mut terminal = ratatui::init();
     let mut new_select = SelectionScreen::new(choices, prompt);
     new_select.run(&mut terminal)?;
     ratatui::restore();
-    return Ok(new_select.final_choice.clone());
+    return Ok(new_select.choices[new_select.final_choice_index].clone());
 }
 
 
@@ -33,7 +32,6 @@ pub fn print_menu<'a, Q: Into<ListItem<'a>> + Clone>(prompt: &'a str, choices: V
 
 
 /// Represesnts a selection screen
-/// NOTE: Might have to introduce other lifetimes
 pub struct SelectionScreen<'a, Q: Into<ListItem<'a>> + Clone> {
     /// If this is set to true the widget stops
     should_exit: bool,
@@ -42,7 +40,7 @@ pub struct SelectionScreen<'a, Q: Into<ListItem<'a>> + Clone> {
     choices: Vec<Q>,
 
     /// The end choice of the user
-    final_choice: Q,
+    final_choice_index: usize,
 
     /// State of the internal List
     list_state: ListState,
@@ -58,7 +56,7 @@ impl<'a, Q: Into<ListItem<'a>> + Clone> SelectionScreen<'a, Q> {
         return Self {
             should_exit: false,
             list_state: ListState::default().with_selected(Some(0)),
-            final_choice: (&choices[0]).clone(),
+            final_choice_index: 0,
             choices: choices,
             title: title,
         };
@@ -95,9 +93,9 @@ impl<'a, Q: Into<ListItem<'a>> + Clone> SelectionScreen<'a, Q> {
                     Some(size) => {
                         // Check if index is within boundes
                         if size < self.choices.len() {
-                            self.final_choice = (&self.choices[size]).clone()
+                            self.final_choice_index = size
                         } else {
-                            self.final_choice = (&self.choices[0]).clone()
+                            self.final_choice_index = 0
                         }
                     }
                     None => todo!(),
@@ -108,11 +106,23 @@ impl<'a, Q: Into<ListItem<'a>> + Clone> SelectionScreen<'a, Q> {
                 self.should_exit = true;
             },
             KeyCode::Char('k') => match self.list_state.selected_mut() {
-                Some(index) => *self.list_state.selected_mut() = Some(*index - 1),
+                Some(index) => *self.list_state.selected_mut() = {
+                    if *index == 0 {
+                        Some(self.choices.len() - 1)
+                    } else {
+                        Some(*index - 1)
+                    }
+                },
                 None => *self.list_state.selected_mut() = Some(0),
             },
             KeyCode::Char('j') => match self.list_state.selected_mut() {
-                Some(index) => *self.list_state.selected_mut() = Some(*index + 1),
+                Some(index) => *self.list_state.selected_mut() = {
+                    if *index == self.choices.len() - 1 {
+                        Some(0)
+                    } else {
+                        Some(*index + 1)
+                    }
+                },
                 None => *self.list_state.selected_mut() = Some(0),
             },
             _ => {}

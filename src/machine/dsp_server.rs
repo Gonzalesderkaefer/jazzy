@@ -31,9 +31,9 @@ pub struct DspServer {
 }
 
 /// This is for ratatui
-impl<'a> From<config::DspServerId> for ListItem<'a> {
-    fn from(value: config::DspServerId) -> Self {
-        return Self::new(value.to_string());
+impl<'a> From<&DspServer> for ListItem<'a> {
+    fn from(value: &DspServer) -> Self {
+        return Self::new(value.id.to_string());
     }
 }
 
