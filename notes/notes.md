@@ -47,3 +47,14 @@ All the types above execept [Machine](#machine) has its own enum that contains t
   * if target dir does not exist, create it and copy contents from inside src
     into newly created target.
   * if target dir does exist copy the entire srcdir as a childdir of target
+
+
+
+## Moving files
+There will be two ways to move a file:
+  * for each item in `src/` move them to `dest/`
+    where `src/` and `dest/` are directories
+  * move one item `src` to `dest` 
+
+
+
