@@ -35,8 +35,8 @@ impl fmt::Display for config::WindowManagerId {
 }
 
 /// This is for ratatui
-impl<'a> From<config::WindowManagerId> for ListItem<'a> {
-    fn from(value: config::WindowManagerId) -> Self {
-        return Self::new(value.to_string());
+impl<'a> From<&WindowManager> for ListItem<'a> {
+    fn from(value: &WindowManager) -> Self {
+        return Self::new(value.id.to_string());
     }
 }

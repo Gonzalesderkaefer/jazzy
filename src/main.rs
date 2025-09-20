@@ -26,10 +26,9 @@ use ratatui::{
 
 
 
-
 fn main() -> io::Result<()>{
-     let wm = menu::menu::print_menu(" Hello ", vec![config::config::WindowManagerId::Sway, config::config::WindowManagerId::Hyprland])?;
-     println!("{wm}");
+     let wm = menu::menu::print_menu(" Hello ", Vec::from(config::config::WAYLAND.supported_wms))?;
+     println!("{}", wm.id);
      return Ok(());
 }
 
