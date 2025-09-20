@@ -19,16 +19,16 @@ pub static BINDEST: &'static str = ".local/bin/";
 
 
 /// Enum for the distroid
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum DistroId {
     Debian,
     Fedora,
-    Arch,
+    ArchLinux,
     Other,
 }
 
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum DspServerId {
     Xorg,
     Wayland,
@@ -36,7 +36,7 @@ pub enum DspServerId {
 }
 
 /// Enum for the window manager
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum WindowManagerId {
     Awesome,
     Bspwm,
@@ -133,8 +133,8 @@ pub const TTY: display::DspServer = display::DspServer {
 /// Distros
 pub const DEBIAN: distro::Distro = distro::Distro {
     id: DistroId::Debian,
-    supported_dsp_serv: [Some(&XORG),Some(&WAYLAND)],
-    supported_wms: [Some(&[&AWESOME_WM, &BSPWM, &I3]), Some(&[&SWAY])],
+    supported_dsp_serv: &[&XORG, &WAYLAND, &TTY],
+    supported_wms: &[&AWESOME_WM, &BSPWM, &I3, &SWAY],
     install: &["apt", "install", "-y"],
     install_suffix: None,
     update: &["apt", "update", "-y"],
@@ -144,8 +144,8 @@ pub const DEBIAN: distro::Distro = distro::Distro {
 
 pub const FEDORA: distro::Distro = distro::Distro {
     id: DistroId::Fedora,
-    supported_dsp_serv: [Some(&XORG),Some(&WAYLAND)],
-    supported_wms: [Some(&[&AWESOME_WM, &BSPWM, &I3]), Some(&[&SWAY, &NIRI, &RIVER, &HYPRLAND])],
+    supported_dsp_serv: &[&XORG,&WAYLAND, &TTY],
+    supported_wms: &[&AWESOME_WM, &BSPWM, &I3, &SWAY, &NIRI, &RIVER, &HYPRLAND],
     install: &["dnf", "install", "-y"],
     install_suffix: None,
     update: &["dnf", "upgrade", "--refresh"],
@@ -154,9 +154,9 @@ pub const FEDORA: distro::Distro = distro::Distro {
 };
 
 pub const ARCH_LINUX: distro::Distro = distro::Distro {
-    id: DistroId::Arch,
-    supported_dsp_serv: [Some(&XORG),Some(&WAYLAND)],
-    supported_wms: [Some(&[&AWESOME_WM, &BSPWM, &I3]), Some(&[&SWAY, &NIRI, &RIVER, &HYPRLAND])],
+    id: DistroId::ArchLinux,
+    supported_dsp_serv: &[&XORG, &WAYLAND, &TTY],
+    supported_wms: &[&AWESOME_WM, &BSPWM, &I3, &SWAY, &NIRI, &RIVER, &HYPRLAND],
     install: &["pacman", "-Syu"],
     install_suffix: Some(&["--noconfirm", "--needed"]),
     update: &["pacman", "-Sy", "--noconfirm", "--needed"],

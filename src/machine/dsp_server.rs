@@ -15,6 +15,7 @@ impl fmt::Display for config::DspServerId {
 }
 
 /// Display server on which the window managers rely
+#[derive(Debug)]
 pub struct DspServer {
     /// Id is stored as an enum
     pub id: config::DspServerId,

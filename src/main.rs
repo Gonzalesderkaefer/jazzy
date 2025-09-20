@@ -12,6 +12,11 @@ mod utils;
 
 
 fn main() {
-    let _ = utils::command::cmd("ls", &["-la", "-t"]);
+    match machine::machine::Machine::get() {
+        Ok(machine) => {
+            println!("{:?}", machine);
+        }
+        Err(_) => return,
+    };
 }
 

@@ -13,18 +13,18 @@ use std::{
 /// The distro this program is running on.
 ///
 /// This struct stores metadata for a certain distro
+#[derive(Debug)]
 pub struct Distro {
     /// Name of the distro. Is an enum.
     pub id: config::DistroId,
 
-    /// List of display servers supported by this distro. If a display server is not supported,
-    /// its entry in this list will be [None].
-    pub supported_dsp_serv: [Option<&'static DspServer>; config::DspServerId::Tty as usize],
+    /// List of display servers supported by this distro.
+    pub supported_dsp_serv: &'static[&'static DspServer],
 
     /// List of List of supported window managers. There are as many lists as there are
     /// display servers. If there's a display server that has no window manager (unlikely)
     /// its entry in this list is [None].
-    pub supported_wms: [Option<&'static [&'static WindowManager]>; config::DspServerId::Tty as usize],
+    pub supported_wms: &'static [&'static WindowManager],
 
     /// Install command to install packages. These are the words with which the install command
     /// starts. It is generally assumed that install commands have the following structure:
