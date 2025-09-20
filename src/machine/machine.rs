@@ -4,7 +4,7 @@ use std::{
     error::Error,
 };
 
-use crate::config::config::DspServerId;
+use crate::config::config::{self, DspServerId};
 use crate::machine::dsp_server;
 use crate::machine::window_manager::WindowManager;
 use crate::menu;
@@ -81,6 +81,39 @@ impl Machine {
                 return Err(MachineError::MenuError(e));
             },
         };
+
+        let window_manager = {
+            // If length is 0 then window manager is NOWM
+            if display_server.supported_wms.len() == 0 || distro.supported_wms.len() == 0 {
+                &config::NOWM
+            } else {
+                // Get all possible window_managers
+                let mut all_window_managers: Vec<&WindowManager> = Vec::new();
+                for window_manager_in_distro in distro.supported_wms {
+                    if display_server.supported_wms.contains(window_manager_in_distro) {
+                        all_window_managers.push(window_manager_in_distro);
+                    }
+                }
+                // Get  choice of window manager from user
+                match menu::menu::print_menu(" Choose a window manager ", all_window_managers) {
+                    Ok(wm) => wm,
+                    Err(error) => {
+                        return Err(MachineError::MenuError(error));
+                    }
+                }
+            }
+        };
+
+        let transfer = match menu::menu::print_menu(" Choose a window manager ", [Transfer::Link, Transfer::Copy, Transfer::None].to_vec()) {
+            Ok(wm) => wm,
+            Err(error) => {
+                return Err(MachineError::MenuError(error));
+            }
+        };
+
+
+
+
 
         return Err(MachineError::PackageMismatch);
 

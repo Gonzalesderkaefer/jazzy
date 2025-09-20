@@ -45,6 +45,7 @@ pub enum WindowManagerId {
     Niri,
     River,
     Hyprland,
+    NoWM,
 }
 
 /// Window managers
@@ -106,6 +107,12 @@ pub const HYPRLAND: wm::WindowManager = wm::WindowManager {
     setup_callback: || {} // callback
 };
 
+pub const NOWM: wm::WindowManager = wm::WindowManager {
+    id: WindowManagerId::NoWM,  // Id
+//             Debian     Fedora     Arch Linux
+    packages: [Some(&[]), Some(&[]), Some(&[])], // Packages
+    setup_callback: || {} // callback
+};
 
 /// Display servers
 pub const XORG: display::DspServer = display::DspServer {
