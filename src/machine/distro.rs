@@ -1,7 +1,14 @@
 use super::window_manager::WindowManager;
 use super::dsp_server::DspServer;
 use crate::config::config;
+use crate::utils::fileutils as fu;
 
+use std::{
+    fmt,
+    fs,
+    io,
+    error::Error,
+};
 
 /// The distro this program is running on.
 ///
@@ -37,3 +44,53 @@ pub struct Distro {
     /// Required packages to use for a minimal install so that the tty works.
     pub packages: &'static [&'static str],
 }
+
+/// This is an error type for a Distro
+#[derive(Debug)]
+pub enum DistroError {
+    FileReadError (io::Error),
+    NotSupported,
+}
+
+/// Implementation of [fmt::Display] for [DistroError]
+impl fmt::Display for DistroError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match &self {
+            DistroError::FileReadError(file_util_err) => {
+                return write!(f, "File read error: {}", file_util_err);
+            },
+            DistroError::NotSupported => {
+                return write!(f, "No supported distro found");
+            },
+        }
+    }
+}
+impl Error for DistroError{}
+
+
+
+
+impl Distro {
+    pub fn get() -> Result<&'static Distro, DistroError> {
+        // Read the release file and check for an error
+        let release_file = match fs::read_to_string("/etc/os-release") {
+            Ok(file_contents) => file_contents,
+            Err(error) => {
+                return Err(DistroError::FileReadError(error));
+            },
+        };
+
+
+        // Search for the distros
+        for distro in config::DISTRO_ASSOC {
+            if release_file.find(distro.1).is_some() {
+                return Ok(distro.0);
+            }
+        };
+
+        return Err(DistroError::NotSupported);
+    }
+}
+
+
+

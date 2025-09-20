@@ -1,6 +1,7 @@
 use std::{
-    ffi::OsStr,
-    io, process::Command,
+    ffi::OsStr, fmt, io,
+    process::Command,
+    error::Error,
 };
 
 
@@ -8,12 +9,26 @@ use std::{
 
 
 /// This enum represesnts an error for this module
+#[derive(Debug)]
 pub enum CommandError {
     IO (io::Error),
     CmdFail,
 }
 
-
+/// Display for CommandError
+impl fmt::Display for CommandError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+        match &self {
+            Self::IO (err) => {
+                return write!(f, "Internal IO Error: {}", err);
+            },
+            CommandError::CmdFail => {
+                return write!(f, "Command failed to execute.");
+            },
+        }
+    }
+}
+impl Error for CommandError {}
 
 /// Execute a command. The parent proc waits until the Sub process has finished executing
 pub fn cmd<S: AsRef<OsStr>>(command: S, args: &[S]) -> Result<(), CommandError> {
