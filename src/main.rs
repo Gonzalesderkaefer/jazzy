@@ -12,11 +12,16 @@ mod utils;
 
 
 fn main() {
-    match machine::machine::Machine::get() {
+    let this_machine = match machine::machine::Machine::get() {
         Ok(machine) => {
-            println!("{:?}", machine);
+            machine
         }
         Err(_) => return,
     };
+
+    this_machine.update();
+    this_machine.install();
+
+
 }
 

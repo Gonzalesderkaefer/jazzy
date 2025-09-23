@@ -1,3 +1,4 @@
+use std::fs::File;
 use std::{path::Path};
 use std::error::Error;
 use std::{fs, io, fmt};
@@ -195,5 +196,86 @@ pub fn create_and_write<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, contents: C
 
 /// for each item in `src/` move them to `dest/` where `src/` and `dest/` are directories
 /// if `dest/` does not exist it will be created
-pub fn move_dir<P: AsRef<Path>>(src: P, dest: P, method: Transfer) {
+pub fn move_dir<P: AsRef<Path>>(src: P, dest: P, method: Transfer) -> Result<(), FileUtilErr> {
+    // Check if nothing needs to be done
+    if let Transfer::None = method {
+        return Ok(());
+    }
+
+    // Check if dest exists
+    match fs::exists(&dest) {
+        Ok(value) => if !value {
+            // Create and check for error
+            match fs::create_dir_all(&dest) {
+                Ok(_) => {},
+                Err(error) => return Err(FileUtilErr::IO(error))
+            };
+        }
+        Err(error) => return Err(FileUtilErr::IO(error)),
+    };
+
+
+
+    // Open source_dir
+    let source_dir = match fs::read_dir(&src) {
+        Ok(dir) => dir,
+        Err(e) => { 
+            return Err(FileUtilErr::IO(e)); 
+        },
+    };
+
+
+
+    // Iterate through source_dir
+    for src_entries in source_dir {
+        // Open directory entry as entry
+        let opened_entry = match src_entries {
+            Ok(entry) => entry,
+            Err(e) => { 
+                return Err(FileUtilErr::IO(e)); 
+            },
+        };
+
+        // Get the file_type of the opened_entry
+        let opened_file_type = match opened_entry.file_type() {
+            Ok (file_type) => file_type,
+            Err(e) => {
+                return Err(FileUtilErr::IO(e));
+            },
+        };
+
+        // Get the basename of the opened entry
+        let opened_basename = opened_entry.file_name();
+
+        // Build new source path
+        let mut source_dir_path = src.as_ref().to_path_buf();
+        source_dir_path.push(&opened_basename);
+
+        // Build new destination path
+        let mut dest_dir_path = dest.as_ref().to_path_buf();
+        dest_dir_path.push(&opened_basename);
+
+
+        match method {
+            Transfer::Link => {
+                match std::os::unix::fs::symlink(source_dir_path, dest_dir_path) {
+                    Ok(_) => {},
+                    Err(error) => return Err(FileUtilErr::IO(error))
+                }
+            },
+            Transfer::Copy => {
+                // Check if source is directory
+                if opened_file_type.is_dir() {
+                    copy_dir(source_dir_path, dest_dir_path)?;
+                } else {
+                    match fs::copy(source_dir_path, dest_dir_path) {
+                        Ok(_) => {},
+                        Err(error) => return Err(FileUtilErr::IO(error))
+                    };
+                }
+            },
+            Transfer::None => return Ok(())
+        }
+    }
+    Ok(())
 }
