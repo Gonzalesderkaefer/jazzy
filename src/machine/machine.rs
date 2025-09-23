@@ -184,6 +184,13 @@ impl Machine {
         }
 
 
+        match distro.install_suffix {
+            Some(suffixes) => for suffix in suffixes  {
+                all_packages.push(suffix);
+            },
+            None => {}
+        }
+
 
 
         return Ok(Self {
