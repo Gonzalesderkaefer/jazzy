@@ -20,6 +20,7 @@ use ratatui::{
 };
 
 // This enum represents an Error for this module
+#[derive(Debug)]
 pub enum MenuErr {
     IO (io::Error),
 }
@@ -31,6 +32,7 @@ impl Display for MenuErr {
         };
     }
 }
+impl std::error::Error for MenuErr {}
 
 
 
@@ -41,6 +43,11 @@ impl Display for MenuErr {
 /// If choices is not empty and no error occured [Some], wrapped in a [Result] is returned.
 /// Else a [MenuErr] wrapped in a [Result] is returned.
 pub fn print_menu<'a, Q: Into<ListItem<'a>> + Clone>(prompt: &'a str, choices: Vec<Q>) -> Result<Option<Q>, MenuErr> {
+    // Check if there are no choices
+    if choices.len() == 0 {
+        return Ok(None);
+    }
+
     // Initialize a Terminal to print stuff to
     let mut terminal = ratatui::init();
 

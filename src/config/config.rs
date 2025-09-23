@@ -172,6 +172,18 @@ pub const ARCH_LINUX: distro::Distro = distro::Distro {
 };
 
 
+pub const OTHER_DISTRO: distro::Distro = distro::Distro {
+    id: DistroId::Other,
+    supported_dsp_serv: &[],
+    supported_wms: &[],
+    install: &[],
+    install_suffix: None,
+    update: &[],
+    upgrade: &[],
+    packages: &[],
+};
+
+
 pub const DISTRO_ASSOC: &'static [(&distro::Distro /* Distro */, &'static str /* string in '/etc/os-release' */)] = &[
     (&DEBIAN, "Debian"),
     (&FEDORA, "Fedora"),
