@@ -9,6 +9,7 @@ use crate::machine::dsp_server;
 use crate::machine::window_manager::WindowManager;
 use crate::menu;
 use crate::menu::menu::MenuErr;
+use crate::utils::command;
 use super::distro;
 use super::dsp_server::DspServer;
 use super::window_manager as wm;
@@ -43,7 +44,7 @@ pub struct Machine {
 pub enum MachineError {
     DistroErr (distro::DistroError),
     MenuError (MenuErr),
-    PackageMismatch,
+    CmdError (command::CommandError),
 }
 
 /// Implementation of [fmt::Display] for [DistroError]
@@ -56,8 +57,8 @@ impl fmt::Display for MachineError {
             Self::MenuError(error) => {
                 return write!(f, "Running the menu failed: {}", error);
             }
-            Self::PackageMismatch => {
-                return write!(f, "Packages that should be there arent. Check if config.rs is configured properly");
+            Self::CmdError(error) => {
+                return write!(f, "Running a command failed: {}", error);
             }
         }
     }
@@ -66,6 +67,7 @@ impl Error for MachineError{}
 
 
 impl Machine {
+    /// Construct a [Machine] from user choices
     pub fn get() -> Result<Self, MachineError> {
         // Get the distro from the system
         // Check if there was an error
@@ -156,6 +158,11 @@ impl Machine {
         // All packages that need to be installed
         let mut all_packages: Vec<&str> = Vec::new();
 
+        // Add install command
+        for cmd_arg in distro.install {
+            all_packages.push(cmd_arg);
+        }
+
         // Add base packages
         for base_package in distro.packages {
             all_packages.push(base_package);
@@ -200,10 +207,41 @@ impl Machine {
             transfer: transfer,
             all_packages: all_packages,
         });
-
-
-
-
-
     }
+
+    /// Update all packages on a machine
+    pub fn update(&self) -> Result<(), MachineError> {
+        // Run the update command
+        match command::cmd("sudo", self.distro.update) {
+            Ok(_) => {},
+            Err(error) => {
+                return Err(MachineError::CmdError(error));
+            },
+        }
+
+        // Run the upgrade command
+        match command::cmd("sudo", self.distro.upgrade) {
+            Ok(_) => {},
+            Err(error) => {
+                return Err(MachineError::CmdError(error));
+            },
+        }
+
+        return Ok(());
+    }
+
+    pub fn install(&self) -> Result<(), MachineError> {
+        // Install all packages
+        match command::cmd("sudo", self.all_packages.as_slice()) {
+            Ok(_) => {},
+            Err(error) => {
+                return Err(MachineError::CmdError(error));
+            },
+        }
+
+        return Ok(());
+    }
+
+
+
 }

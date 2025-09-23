@@ -14,7 +14,7 @@ mod utils;
 fn main() {
     match machine::machine::Machine::get() {
         Ok(machine) => {
-            println!("{:?}", machine.all_packages);
+            println!("{:?}", machine);
         }
         Err(_) => return,
     };
