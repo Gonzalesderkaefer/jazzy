@@ -4,7 +4,7 @@ use std::{
     error::Error,
 };
 
-use crate::config::config::{self, DspServerId};
+use crate::config::config::{self, DspServerId, NOWM};
 use crate::machine::dsp_server;
 use crate::machine::window_manager::WindowManager;
 use crate::menu;
@@ -109,8 +109,90 @@ impl Machine {
             },
         };
 
+        // Get display server from user
+        // This is an [Option]
+        let display_serv = match menu::menu::print_menu(" Choose a display server ", distro.supported_dsp_serv.to_vec()) {
+            Ok(server) => server,
+            Err(error) => return Err(MachineError::MenuError(error))
+        };
+
+        // Check if list was empty
+        let display_server = match display_serv {
+            Some(server) => server,
+            None => &config::TTY,
+        };
 
 
+        // Get supported window managers
+        let mut supported_wms: Vec<&WindowManager> = Vec::new();
+        for window_manager in distro.supported_wms {
+            if display_server.supported_wms.contains(window_manager) {
+                supported_wms.push(window_manager);
+            }
+        }
+
+        // Get window manager from user
+        let window_manager_opt = match menu::menu::print_menu(" Choose a window manager ", supported_wms) {
+            Ok(wm) => wm,
+            Err(error) => return Err(MachineError::MenuError(error))
+        };
+
+        // Check if list was empty
+        let window_manager = match window_manager_opt {
+            Some(wm) => wm,
+            None => &NOWM,
+        };
+
+
+
+        // Get window manager from user
+        let transfer = match menu::menu::print_menu(" Choose a method of transfer ", vec![Transfer::None, Transfer::Link, Transfer::Copy]) {
+            // This cannot ever panic because the list is not empty
+            Ok(transfer_option) => transfer_option.expect("The list of transfer methods was empty"),
+            Err(error) => return Err(MachineError::MenuError(error)),
+        };
+
+
+        // All packages that need to be installed
+        let mut all_packages: Vec<&str> = Vec::new();
+
+        // Add base packages
+        for base_package in distro.packages {
+            all_packages.push(base_package);
+        }
+
+        // Check if there are packages for the distro
+        match display_server.packages[distro.id.clone() as usize] {
+            Some(dsp_server_pkgs) => {
+                // append all packages
+                for display_package in dsp_server_pkgs {
+                    all_packages.push(display_package);
+                }
+            },
+            None => {},
+        }
+
+        // Check if there are packages for the distro
+        match window_manager.packages[distro.id.clone() as usize] {
+            Some(wm_pkgs) => {
+                // append all packages
+                for wm_package in wm_pkgs {
+                    all_packages.push(wm_package);
+                }
+            },
+            None => {},
+        }
+
+
+
+
+        return Ok(Self {
+            distro: distro,
+            display_server: display_server,
+            gui: window_manager,
+            transfer: transfer,
+            all_packages: all_packages,
+        });
 
 
 
