@@ -1,7 +1,8 @@
-// Libraries
 use std::{path::Path};
 use std::error::Error;
 use std::{fs, io, fmt};
+
+use crate::machine::transfer::Transfer;
 
 
 
@@ -154,7 +155,7 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> Result<()
 
 
 
-/// Create a file and write contents to it.
+/// Create a file and write `contents` to it.
 ///
 /// This fucntion creates a file including its parent directory structure writes `contents` to the
 /// file. If the file already exists, no action is taken.
@@ -192,4 +193,7 @@ pub fn create_and_write<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, contents: C
     return Ok(());
 }
 
-
+/// for each item in `src/` move them to `dest/` where `src/` and `dest/` are directories
+/// if `dest/` does not exist it will be created
+pub fn move_dir<P: AsRef<Path>>(src: P, dest: P, method: Transfer) {
+}

@@ -2,6 +2,7 @@ use crate::config::config;
 use crate::FgColor;
 
 
+use std::fmt::Display;
 use std::io;
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use crossterm::terminal;
@@ -18,13 +19,48 @@ use ratatui::{
     DefaultTerminal, Frame,
 };
 
+// This enum represents an Error for this module
+pub enum MenuErr {
+    IO (io::Error),
+}
 
-pub fn print_menu<'a, Q: Into<ListItem<'a>> + Clone>(prompt: &'a str, choices: Vec<Q>) -> io::Result<Q> {
+impl Display for MenuErr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        return match &self {
+            MenuErr::IO(error) => write!(f, "Internal IO Error: {}", error)
+        };
+    }
+}
+
+
+
+/// Print a selection screen to the terminal that contains `choices` and returns
+/// one of the `choices`.
+///
+/// If choices is empty and no error occured [None], wrapped in a [Result] is returned.
+/// If choices is not empty and no error occured [Some], wrapped in a [Result] is returned.
+/// Else a [MenuErr] wrapped in a [Result] is returned.
+pub fn print_menu<'a, Q: Into<ListItem<'a>> + Clone>(prompt: &'a str, choices: Vec<Q>) -> Result<Option<Q>, MenuErr> {
+    // Initialize a Terminal to print stuff to
     let mut terminal = ratatui::init();
+
+    // Create a Selection screen ..
     let mut new_select = SelectionScreen::new(choices, prompt);
-    new_select.run(&mut terminal)?;
+    // .. and 'start' it.
+    let menu_result =  new_select.run(&mut terminal);
+
+    // This is so that the terminal doesn't look weird 
     ratatui::restore();
-    return Ok(new_select.choices[new_select.final_choice_index].clone());
+
+    // Check if running the screen was successful
+    match menu_result {
+        Ok(_) => {
+            return Ok(Some(new_select.choices[new_select.final_choice_index].clone()));
+        },
+        Err(error) => {
+            return Err(MenuErr::IO(error));
+        }
+    }
 }
 
 

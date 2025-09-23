@@ -126,7 +126,7 @@ pub const WAYLAND: display::DspServer = display::DspServer {
     id: DspServerId::Wayland,
     supported_wms: &[&SWAY, &NIRI, &RIVER, &HYPRLAND],
     setup_callback: || {},
-    packages: [Some(pkg::DEB_XORG), Some(pkg::FED_XORG), Some(pkg::ARCH_XORG)],
+    packages: [Some(pkg::DEB_WAY), Some(pkg::FED_WAY), Some(pkg::ARCH_WAY)],
 };
 
 pub const TTY: display::DspServer = display::DspServer {

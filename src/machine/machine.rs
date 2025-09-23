@@ -111,11 +111,53 @@ impl Machine {
             }
         };
 
+        // Get all packages
+        let mut all_packages: Vec<&'static str> = Vec::new();
+
+        // First get the install command itself
+        for install_component in distro.install {
+            all_packages.push(install_component);
+        }
+
+        // Get the base packages ..
+        for base_package in distro.packages {
+            all_packages.push(base_package);
+        }
+
+        // .. then check if there are packages for this distro and display server ..
+        if let Some(dsp_packages) = display_server.packages[distro.id.clone() as usize] {
+            // .. and add the packages ..
+            for dsp_package in dsp_packages {
+                all_packages.push(dsp_package);
+            }
+        }
 
 
+        // .. then check if there are packages for this distro and window manager ..
+        if let Some(wm_packages) = window_manager.packages[distro.id.clone() as usize] {
+            // .. and finally add the packages ..
+            for wm_package in wm_packages {
+                all_packages.push(wm_package);
+            }
+        }
+
+        // .. then check if there are install_suffixes for this distro ..
+        if let Some(suffixes) = distro.install_suffix {
+            // .. and finally add the suffixes ..
+            for suffix in suffixes {
+                all_packages.push(suffix);
+            }
+        }
 
 
-        return Err(MachineError::PackageMismatch);
+        return Ok(Self {
+            distro: distro,
+            display_server: display_server,
+            gui: Some(window_manager),
+            transfer: transfer,
+            all_packages: all_packages,
+        });
+
 
     }
 }
