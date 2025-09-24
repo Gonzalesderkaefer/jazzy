@@ -2,6 +2,7 @@
 /// for custom configuration that is specific for each device
 
 /// Predifined file contents
+#[allow(unused)]
 pub static CUSTOMIZED_SH: &'static str = "killshells() { pkill -KILL -u $USER -t tty1 }\n\
     [ \"$(tty)\" = \"/dev/tty1\" ] && exec startx\n";
 
