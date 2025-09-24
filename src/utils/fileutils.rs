@@ -18,6 +18,10 @@ pub enum FileUtilErr {
 
     // create_file_and_write
     WriteToDir,
+
+    // create_file_and_write_user
+    NoHome,
+
 }
 impl fmt::Display for FileUtilErr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
@@ -36,6 +40,9 @@ impl fmt::Display for FileUtilErr {
             },
             Self::WriteToDir => {
                 return write!(f, "Can't write to a directory");
+            },
+            Self::NoHome => {
+                return write!(f, "No home directory found");
             },
         }
     }
@@ -189,7 +196,7 @@ pub fn create_and_write<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, contents: C
     // Get the parent of the new file
     let parent_of_new_file = match new_file.as_ref().parent() {
         Some(parent) => parent,
-        None => { return Err(FileUtilErr::WriteToDir); },
+        None => return Err(FileUtilErr::WriteToDir), // This will probably never happen because `new_file` is not a directory
     };
 
     // Create the parent if necessary
@@ -208,6 +215,83 @@ pub fn create_and_write<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, contents: C
 
     return Ok(());
 }
+
+
+
+
+
+
+
+
+
+/// Create a file and write `contents` to it.
+///
+/// This fucntion does what [create_and_write] does but `new_file` is relative to
+/// `/home/<username>`
+pub fn create_and_write_user<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, contents: C) -> Result<(), FileUtilErr> {
+
+    // Get the home directory
+    let mut home_dir = match std::env::home_dir() {
+        Some(home) => home,
+        None => return Err(FileUtilErr::NoHome),
+    };
+
+    let full_path = {
+        // Push file path to home_dir
+        home_dir.push(&new_file);
+        home_dir
+    };
+
+
+    // Check if new_file already exists
+    if full_path.as_path().exists() {
+        return Ok(());
+    }
+
+    // Check if path is a directory
+    if full_path.as_path().is_dir() {
+         return Err(FileUtilErr::WriteToDir);
+    }
+
+    // Get the parent of the new file
+    let parent_of_new_file = match full_path.as_path().parent() {
+        Some(parent) => parent,
+        None => return Err(FileUtilErr::WriteToDir), // This will probably never happen because `new_file` is not a directory
+    };
+
+    // Create the parent if necessary
+    if ! parent_of_new_file.exists() {
+        match fs::create_dir_all(parent_of_new_file) {
+            Ok(()) => {},
+            Err(e) => { return Err(FileUtilErr::IO(e)); },
+        }
+    }
+
+    // finally write the file
+    match fs::write(full_path, contents) {
+        Ok(_) => {},
+        Err(e) => { return Err(FileUtilErr::IO(e)); }
+    }
+
+    return Ok(());
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /// for each item in `src/` move them to `dest/` where `src/` and `dest/` are directories
 /// if `dest/` does not exist it will be created

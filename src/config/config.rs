@@ -4,6 +4,8 @@ use crate::machine::dsp_server as display;
 use super::packages as pkg;
 
 
+pub static mut HOMEDIR: String = String::new();
+
 /// This file defines all constants that are useful for main.rs
 /// If file paths are used make then relative to $HOME
 
