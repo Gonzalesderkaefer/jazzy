@@ -12,16 +12,9 @@ mod utils;
 
 
 fn main() {
-    let this_machine = match machine::machine::Machine::get() {
-        Ok(machine) => {
-            machine
-        }
-        Err(_) => return,
+    match utils::fileutils::move_dir("/home/user1/.config/", "/home/user1/Documents/code/rust/configstuff", machine::transfer::Transfer::Copy) {
+        Ok(_) => {}
+        Err(error) => println!("{error}")
     };
-
-    this_machine.update();
-    this_machine.install();
-
-
 }
 

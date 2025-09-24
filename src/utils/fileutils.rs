@@ -267,10 +267,10 @@ pub fn move_dir<P: AsRef<Path>>(src: P, dest: P, method: Transfer) -> Result<(),
                 // Check if source is directory
                 if opened_file_type.is_dir() {
                     copy_dir(source_dir_path, dest_dir_path)?;
-                } else {
-                    match fs::copy(source_dir_path, dest_dir_path) {
+                } else if opened_file_type.is_file() {
+                    match fs::copy(&source_dir_path, dest_dir_path) {
                         Ok(_) => {},
-                        Err(error) => return Err(FileUtilErr::IO(error))
+                        Err(error) => return Err(FileUtilErr::IO(error)),
                     };
                 }
             },
