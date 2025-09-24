@@ -141,7 +141,22 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> Result<()
                     return Err(e);
                 },
             }
-        } else {
+        } else if opened_file_type.is_symlink() {
+            // Get the target of the link
+            let target_path = match fs::read_link(source_dir_path) {
+                Ok(path) => path,
+                Err(error) => return Err(FileUtilErr::IO(error)),
+            };
+
+            // Create the new symlink
+            match std::os::unix::fs::symlink(target_path, dest_dir_path) {
+                Ok(_) => {},
+                Err(error) => return Err(FileUtilErr::IO(error))
+            }
+
+
+
+        } else if opened_file_type.is_file() {
             match fs::copy(source_dir_path.as_path(), dest_dir_path.as_path()) {
                 Ok(_) => {},
                 Err(e) => {
@@ -267,7 +282,22 @@ pub fn move_dir<P: AsRef<Path>>(src: P, dest: P, method: Transfer) -> Result<(),
                 // Check if source is directory
                 if opened_file_type.is_dir() {
                     copy_dir(source_dir_path, dest_dir_path)?;
-                } else if opened_file_type.is_file() {
+                } else if opened_file_type.is_symlink() {
+                    // Get the target of the link
+                    let target_path = match fs::read_link(source_dir_path) {
+                        Ok(path) => path,
+                        Err(error) => return Err(FileUtilErr::IO(error)),
+                    };
+
+                    // Create the new symlink
+                    match std::os::unix::fs::symlink(target_path, dest_dir_path) {
+                        Ok(_) => {},
+                        Err(error) => return Err(FileUtilErr::IO(error))
+                    }
+
+
+
+                }else if opened_file_type.is_file() {
                     match fs::copy(&source_dir_path, dest_dir_path) {
                         Ok(_) => {},
                         Err(error) => return Err(FileUtilErr::IO(error)),
