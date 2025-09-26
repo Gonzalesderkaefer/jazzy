@@ -6,14 +6,14 @@
 pub static CUSTOMIZED_SH: &'static str = "killshells() { pkill -KILL -u $USER -t tty1 }\n\
     [ \"$(tty)\" = \"/dev/tty1\" ] && exec startx\n";
 
-pub static _DEBMDMENU: &'static str = "#!/usr/bin/sh\n\
+pub static DEBMDMENU: &'static str = "#!/usr/bin/sh\n\
                   if [ $XDG_SESSION_TYPE = \"wayland\" ]; then\n\
                       exec wofi_dmenu;\n\
                   else\n\
                       exec rofi_dmenu;\n\
                   fi\n";
 
-pub static _DEBMDRUN: &'static str = "#!/usr/bin/sh\n\
+pub static DEBMDRUN: &'static str = "#!/usr/bin/sh\n\
                  if [ $XDG_SESSION_TYPE = \"wayland\" ]; then\n\
                      exec wofi_app;\n\
                  else\n\

@@ -2,6 +2,8 @@ use crate::machine::distro;
 use crate::machine::window_manager as wm;
 use crate::machine::dsp_server as display;
 use super::packages as pkg;
+use super::custom as cstm;
+use crate::utils::fileutils as fu;
 
 
 pub static mut HOMEDIR: String = String::new();
@@ -149,6 +151,12 @@ pub const DEBIAN: distro::Distro = distro::Distro {
     update: &["apt", "update", "-y"],
     upgrade: &["apt", "upgrade", "-y"],
     packages: pkg::DEB_BASE,
+    setup_callback: || {
+        // for Rofi
+        let _ = fu::create_and_write_user(".local/bin/mdrun", cstm::DEBMDRUN);
+        let _ = fu::create_and_write_user(".local/bin/mdmenu", cstm::DEBMDMENU);
+
+    },
 };
 
 pub const FEDORA: distro::Distro = distro::Distro {
@@ -160,6 +168,12 @@ pub const FEDORA: distro::Distro = distro::Distro {
     update: &["dnf", "upgrade", "--refresh"],
     upgrade: &["dnf", "update", "-y"],
     packages: pkg::FED_BASE,
+    setup_callback: || {
+        // for Rofi
+        let _ = fu::create_and_write_user(".local/bin/mdrun", cstm::MDRUN_CONTENT);
+        let _ = fu::create_and_write_user(".local/bin/mdmenu", cstm::MDMENU_CONTENT);
+
+    },
 };
 
 pub const ARCH_LINUX: distro::Distro = distro::Distro {
@@ -171,6 +185,12 @@ pub const ARCH_LINUX: distro::Distro = distro::Distro {
     update: &["pacman", "-Sy", "--noconfirm", "--needed"],
     upgrade: &["pacman", "-Syu", "--noconfirm", "--needed"],
     packages: pkg::ARCH_BASE,
+    setup_callback: || {
+        // for Rofi
+        let _ = fu::create_and_write_user(".local/bin/mdrun", cstm::MDRUN_CONTENT);
+        let _ = fu::create_and_write_user(".local/bin/mdmenu", cstm::MDMENU_CONTENT);
+
+    },
 };
 
 
@@ -183,6 +203,7 @@ pub const OTHER_DISTRO: distro::Distro = distro::Distro {
     update: &[],
     upgrade: &[],
     packages: &[],
+    setup_callback: || {},
 };
 
 

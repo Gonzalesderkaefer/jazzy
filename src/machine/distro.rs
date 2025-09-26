@@ -43,6 +43,9 @@ pub struct Distro {
 
     /// Required packages to use for a minimal install so that the tty works.
     pub packages: &'static [&'static str],
+
+    /// Setup function to setup things up specific to this distro
+    pub setup_callback: fn (),
 }
 
 /// This is an error type for a Distro
