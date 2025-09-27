@@ -7,7 +7,7 @@ mod utils;
 
 
 
-use std::{env::home_dir, path::{Path, PathBuf}};
+use std::{env::home_dir, io, path::{Path, PathBuf}, result};
 use utils::fileutils as fu;
 use machine::transfer;
 use config::config as cfg;
@@ -18,30 +18,30 @@ fn main() {
 }
 
 
-fn run() {
+fn run() -> Result<(), JazzyErr>{
     // Get the home directory
     let home_dir = match std::env::home_dir() {
         Some(home) => home,
-        None => todo!(),
+        None => return Err(JazzyErr::NoHome(line!(), file!())),
     };
 
 
     // Get the machine
     let machine = match machine::machine::Machine::get() {
         Ok(mach) => mach,
-        Err(_) => todo!(),
+        Err(error) => return Err(JazzyErr::MachineErr(error)),
     };
 
     // Update the machine
     match machine.update() {
         Ok(_) => {}
-        Err(_) => todo!(),
+        Err(error) => return Err(JazzyErr::MachineErr(error)),
     }
 
     // Install the packages
     match machine.install() {
         Ok(_) => {},
-        Err(_) => todo!(),
+        Err(error) => return Err(JazzyErr::MachineErr(error)),
     }
 
     // move the config files
@@ -54,12 +54,14 @@ fn run() {
     for file in cstm::CUSTOMIZED {
         match fu::create_and_write_user(file.0, file.1, file.2) {
             Ok(_) => {},
-            Err(_) => todo!(),
+            Err(error) => return Err(JazzyErr::FileUtil(error)),
         }
     }
 
     // Setup the machine
     machine.setup();
+
+    return Ok(());
 
 }
 
@@ -79,3 +81,36 @@ pub fn movedir<P: AsRef<Path>>(home_dir: &PathBuf, src: P, dest: P, method: &tra
         Err(_) => todo!(),
     }
 }
+
+
+
+
+
+
+/// The main error type for this program. Functions in this module and setup_callback functions
+/// for the machine-sub types will return this error.
+#[derive(Debug)]
+pub enum JazzyErr {
+    IO (io::Error),
+    MachineErr (machine::machine::MachineError),
+    FileUtil (fu::FileUtilErr),
+    NoHome (u32, &'static str),
+}
+impl std::error::Error for JazzyErr {}
+
+impl std::fmt::Display for JazzyErr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &self {
+            JazzyErr::IO(error) => return write!(f, "Internal IO Error at: {error}"),
+            JazzyErr::MachineErr(error) => return write!(f, "Machine Error {error}"),
+            JazzyErr::FileUtil(error) => return write!(f, "File Error: {error}"),
+            JazzyErr::NoHome(line, file) => return write!(f, "No $HOME found at: {line}, {file}"),
+        }
+    }
+}
+
+
+
+
+
+

@@ -10,6 +10,7 @@ use crate::machine::window_manager::WindowManager;
 use crate::menu;
 use crate::menu::menu::MenuErr;
 use crate::utils::command;
+use crate::JazzyErr;
 use super::distro;
 use super::dsp_server::DspServer;
 use super::window_manager as wm;
