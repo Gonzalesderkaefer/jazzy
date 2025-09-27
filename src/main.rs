@@ -13,6 +13,8 @@ use machine::transfer;
 use config::config as cfg;
 use config::custom as cstm;
 
+use crate::utils::command as cmd;
+
 fn main() {
     run();
 }
@@ -59,7 +61,26 @@ fn run() -> Result<(), JazzyErr>{
     }
 
     // Setup the machine
-    machine.setup();
+    (machine.display_server.setup_callback)();
+    (machine.gui.setup_callback)();
+
+    // Run final commands
+
+    // Gsettings stuff for theming
+    match cmd::cmd("gsettings", &["set", "org.gnome.desktop.interface", "gtk-theme", "\'Adwaita-dark\'"]) {
+        Ok(_) => {},
+        Err(error) => return Err(JazzyErr::Command(error, line!(), file!())),
+    };
+    match cmd::cmd("gsettings", &["set", "org.gnome.desktop.interface", "color-scheme", "\'prefer-dark\'"]) {
+        Ok(_) => {},
+        Err(error) => return Err(JazzyErr::Command(error, line!(), file!())),
+    };
+    match cmd::cmd("gsettings", &["set", "org.gnome.desktop.interface", "icon-theme", "\'Papirus-Dark\'"]) {
+        Ok(_) => {},
+        Err(error) => return Err(JazzyErr::Command(error, line!(), file!())),
+    };
+
+
 
     return Ok(());
 
@@ -95,6 +116,7 @@ pub enum JazzyErr {
     MachineErr (machine::machine::MachineError),
     FileUtil (fu::FileUtilErr),
     NoHome (u32, &'static str),
+    Command (cmd::CommandError, u32, &'static str)
 }
 impl std::error::Error for JazzyErr {}
 
@@ -105,6 +127,7 @@ impl std::fmt::Display for JazzyErr {
             JazzyErr::MachineErr(error) => return write!(f, "Machine Error {error}"),
             JazzyErr::FileUtil(error) => return write!(f, "File Error: {error}"),
             JazzyErr::NoHome(line, file) => return write!(f, "No $HOME found at: {line}, {file}"),
+            JazzyErr::Command(error, line, file) => return write!(f, "Error running command at {line}, {file}: {error}"),
         }
     }
 }
