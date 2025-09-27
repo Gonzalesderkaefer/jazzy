@@ -26,6 +26,13 @@ pub const DEB_GUI: &'static[&'static str] = &[
     "network-manager-openconnect-gnome",
     "eom",
     "network-manager-openconnect",
+    "sddm",
+    "libqt6svg6",
+    "qt6-virtualkeyboard-plugin",
+    "libqt6multimedia6",
+    "qml6-module-qtquick-controls",
+    "qml6-module-qtquick-effects",
+    "libxcb-cursor0",
 ];
 
 
@@ -133,6 +140,10 @@ pub const FED_GUI: &'static[&'static str] = &[
     "thunar",
     "mate-polkit",
     "rofi-wayland",
+    "sddm",
+    "qt6-qtsvg",
+    "qt6-qtvirtualkeyboard",
+    "qt6-qtmultimedia",
 ];
 
 
@@ -253,6 +264,10 @@ pub const ARCH_GUI: &'static[&'static str] = &[
     "networkmanager",
     "thunar",
     "nm-connection-editor",
+    "sddm",
+    "qt6-svg",
+    "qt6-virtualkeyboard",
+    "qt6-multimedia-ffmpeg",
 ];
 
 pub const ARCH_BASE: &'static[&'static str] = &[
