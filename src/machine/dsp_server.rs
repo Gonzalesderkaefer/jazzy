@@ -37,17 +37,3 @@ impl<'a> From<&DspServer> for ListItem<'a> {
         return Self::new(value.id.to_string());
     }
 }
-
-
-impl menu::MenuEntry for DspServer {
-    fn menu_entry(&self) -> String {
-        // Store id as string
-        let mut self_as_string = self.id.to_string();
-
-        // Insert square brackets
-        self_as_string.insert(0, '[');
-        self_as_string.insert(2, ']');
-
-        return self_as_string;
-    }
-}

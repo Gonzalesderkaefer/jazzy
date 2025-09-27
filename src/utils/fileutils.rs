@@ -183,6 +183,7 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> Result<()
 ///
 /// This fucntion creates a file including its parent directory structure writes `contents` to the
 /// file. If the file already exists, no action is taken.
+#[allow(unused)]
 pub fn create_and_write<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, contents: C, mode: u32) -> Result<(), FileUtilErr> {
     // Check if new_file already exists
     if new_file.as_ref().exists() {

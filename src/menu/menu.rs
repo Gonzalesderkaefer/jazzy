@@ -222,18 +222,3 @@ impl<'a, Q: Into<ListItem<'a>> + Clone> Widget for &mut SelectionScreen<'a, Q> {
         StatefulWidget::render(list, cool_area, buf, &mut self.list_state);
     }
 }
-
-
-
-
-/// Types that implement this trait will have a way to display the type
-/// as a choice in a multiple choice menu
-pub trait MenuEntry {
-    /// Create a Menu entry for this type. This will be used to print a Menu screen.
-    fn menu_entry(&self) -> String;
-}
-
-
-
-
-

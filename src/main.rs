@@ -65,6 +65,7 @@ fn run() -> Result<(), JazzyErr>{
 
     // Setup the machine
     (machine.display_server.setup_callback)();
+    (machine.distro.setup_callback)();
     (machine.gui.setup_callback)();
 
     // Run final commands

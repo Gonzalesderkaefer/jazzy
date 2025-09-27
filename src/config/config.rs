@@ -6,8 +6,6 @@ use super::custom as cstm;
 use crate::utils::fileutils as fu;
 
 
-pub static mut HOMEDIR: String = String::new();
-
 /// This file defines all constants that are useful for main.rs
 /// If file paths are used make then relative to $HOME
 
