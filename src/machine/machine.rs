@@ -242,6 +242,15 @@ impl Machine {
         return Ok(());
     }
 
+    pub fn setup(&self) {
+        // Run setup for the display server
+        (self.display_server.setup_callback)();
+
+        // Run setup for the window manager
+        (self.gui.setup_callback)();
+
+    }
+
 
 
 }

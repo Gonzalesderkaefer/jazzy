@@ -153,8 +153,8 @@ pub const DEBIAN: distro::Distro = distro::Distro {
     packages: pkg::DEB_BASE,
     setup_callback: || {
         // for Rofi
-        let _ = fu::create_and_write_user(".local/bin/mdrun", cstm::DEBMDRUN);
-        let _ = fu::create_and_write_user(".local/bin/mdmenu", cstm::DEBMDMENU);
+        let _ = fu::create_and_write_user(".local/bin/mdrun", cstm::DEBMDRUN, 0o755);
+        let _ = fu::create_and_write_user(".local/bin/mdmenu", cstm::DEBMDMENU, 0o755);
 
     },
 };
@@ -170,8 +170,8 @@ pub const FEDORA: distro::Distro = distro::Distro {
     packages: pkg::FED_BASE,
     setup_callback: || {
         // for Rofi
-        let _ = fu::create_and_write_user(".local/bin/mdrun", cstm::MDRUN_CONTENT);
-        let _ = fu::create_and_write_user(".local/bin/mdmenu", cstm::MDMENU_CONTENT);
+        let _ = fu::create_and_write_user(".local/bin/mdrun", cstm::MDRUN_CONTENT, 0o755);
+        let _ = fu::create_and_write_user(".local/bin/mdmenu", cstm::MDMENU_CONTENT, 0o755);
 
     },
 };
@@ -187,8 +187,8 @@ pub const ARCH_LINUX: distro::Distro = distro::Distro {
     packages: pkg::ARCH_BASE,
     setup_callback: || {
         // for Rofi
-        let _ = fu::create_and_write_user(".local/bin/mdrun", cstm::MDRUN_CONTENT);
-        let _ = fu::create_and_write_user(".local/bin/mdmenu", cstm::MDMENU_CONTENT);
+        let _ = fu::create_and_write_user(".local/bin/mdrun", cstm::MDRUN_CONTENT, 0o755);
+        let _ = fu::create_and_write_user(".local/bin/mdmenu", cstm::MDMENU_CONTENT, 0o755);
 
     },
 };

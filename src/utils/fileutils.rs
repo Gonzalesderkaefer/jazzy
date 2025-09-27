@@ -1,3 +1,4 @@
+use std::os::unix::fs::PermissionsExt;
 use std::fs::File;
 use std::{path::Path};
 use std::error::Error;
@@ -182,7 +183,7 @@ pub fn copy_dir<P: AsRef<Path>, Q: AsRef<Path>>(source: P, dest: Q) -> Result<()
 ///
 /// This fucntion creates a file including its parent directory structure writes `contents` to the
 /// file. If the file already exists, no action is taken.
-pub fn create_and_write<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, contents: C) -> Result<(), FileUtilErr> {
+pub fn create_and_write<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, contents: C, mode: u32) -> Result<(), FileUtilErr> {
     // Check if new_file already exists
     if new_file.as_ref().exists() {
         return Ok(());
@@ -208,10 +209,18 @@ pub fn create_and_write<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, contents: C
     }
 
     // finally write the file
-    match fs::write(new_file, contents) {
+    match fs::write(&new_file, contents) {
         Ok(_) => {},
         Err(e) => { return Err(FileUtilErr::IO(e)); }
     }
+
+    // Set permissions for the file
+    match fs::set_permissions(new_file, fs::Permissions::from_mode(mode)) {
+        Ok(_) => {},
+        Err(error) => return Err(FileUtilErr::IO(error)),
+    }
+
+
 
     return Ok(());
 }
@@ -228,7 +237,7 @@ pub fn create_and_write<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, contents: C
 ///
 /// This fucntion does what [create_and_write] does but `new_file` is relative to
 /// `/home/<username>`
-pub fn create_and_write_user<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, contents: C) -> Result<(), FileUtilErr> {
+pub fn create_and_write_user<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, contents: C, mode: u32) -> Result<(), FileUtilErr> {
 
     // Get the home directory
     let mut home_dir = match std::env::home_dir() {
@@ -270,8 +279,16 @@ pub fn create_and_write_user<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, conten
     // finally write the file
     match fs::write(full_path, contents) {
         Ok(_) => {},
-        Err(e) => { return Err(FileUtilErr::IO(e)); }
+        Err(e) => return Err(FileUtilErr::IO(e)),
     }
+
+    // Set permissions for the file
+    match fs::set_permissions(new_file, fs::Permissions::from_mode(mode)) {
+        Ok(_) => {},
+        Err(error) => return Err(FileUtilErr::IO(error)),
+    }
+
+
 
     return Ok(());
 }

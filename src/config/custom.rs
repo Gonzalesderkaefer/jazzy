@@ -79,9 +79,4 @@ pub static CUSTOMIZED: &'static [(&str, &str, u32)] =
 
     // GTK3
     (".config/gtk-3.0/settings.ini", GTK3_CONFIG, 0o644),
-
-
-    // Menus
-    (".local/bin/mdmenu", MDMENU_CONTENT, 0o755),
-    (".local/bin/mdrun", MDRUN_CONTENT, 0o755),
 ];
