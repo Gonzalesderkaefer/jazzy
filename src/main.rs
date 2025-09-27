@@ -16,7 +16,10 @@ use config::custom as cstm;
 use crate::utils::command as cmd;
 
 fn main() {
-    run();
+    match run() {
+        Ok(_) => {}
+        Err(error) => println!("{error}"),
+    };
 }
 
 
