@@ -278,7 +278,7 @@ pub fn create_and_write_user<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, conten
     }
 
     // finally write the file
-    match fs::write(full_path, contents) {
+    match fs::write(&full_path, contents) {
         Ok(_) => {},
         Err(e) => return Err(FileUtilErr::IO(e, line!(), file!())),
     }
