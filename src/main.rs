@@ -50,10 +50,10 @@ fn run() -> Result<(), JazzyErr>{
     }
 
     // move the config files
-    movedir(&home_dir, cfg::CFGSRC, cfg::CFGDEST, &machine.transfer);
+    movedir(&home_dir, cfg::CFGSRC, cfg::CFGDEST, &machine.transfer)?;
 
     // move the scripts
-    movedir(&home_dir, cfg::BINSRC, cfg::BINDEST, &machine.transfer);
+    movedir(&home_dir, cfg::BINSRC, cfg::BINDEST, &machine.transfer)?;
 
     // Create files
     for file in cstm::CUSTOMIZED {

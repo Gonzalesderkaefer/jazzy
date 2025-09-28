@@ -375,9 +375,11 @@ pub fn move_dir<P: AsRef<Path>>(src: P, dest: P, method: Transfer) -> Result<(),
 
         match method {
             Transfer::Link => {
-                match std::os::unix::fs::symlink(source_dir_path, dest_dir_path) {
-                    Ok(_) => {},
-                    Err(error) => return Err(FileUtilErr::IO(error, line!(), file!()))
+                if let Ok(false) = fs::exists(&dest_dir_path) {
+                    match std::os::unix::fs::symlink(source_dir_path, dest_dir_path) {
+                        Ok(_) => {},
+                        Err(error) => return Err(FileUtilErr::IO(error, line!(), file!()))
+                    }
                 }
             },
             Transfer::Copy => {
