@@ -284,7 +284,7 @@ pub fn create_and_write_user<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, conten
     }
 
     // Set permissions for the file
-    match fs::set_permissions(new_file, fs::Permissions::from_mode(mode)) {
+    match fs::set_permissions(full_path, fs::Permissions::from_mode(mode)) {
         Ok(_) => {},
         Err(error) => return Err(FileUtilErr::IO(error, line!(), file!())),
     }
