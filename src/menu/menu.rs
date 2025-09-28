@@ -22,13 +22,13 @@ use ratatui::{
 // This enum represents an Error for this module
 #[derive(Debug)]
 pub enum MenuErr {
-    IO (io::Error),
+    IO (io::Error, u32, &'static str),
 }
 
 impl Display for MenuErr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         return match &self {
-            MenuErr::IO(error) => write!(f, "Internal IO Error: {}", error)
+            MenuErr::IO(error, line, file) => write!(f, "Internal IO Error at {line} in {file}: {}", error)
         };
     }
 }
@@ -65,7 +65,7 @@ pub fn print_menu<'a, Q: Into<ListItem<'a>> + Clone>(prompt: &'a str, choices: V
             return Ok(Some(new_select.choices[new_select.final_choice_index].clone()));
         },
         Err(error) => {
-            return Err(MenuErr::IO(error));
+            return Err(MenuErr::IO(error, line!(), file!()));
         }
     }
 }

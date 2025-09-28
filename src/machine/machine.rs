@@ -43,23 +43,23 @@ pub struct Machine {
 /// This is an error type for a Distro
 #[derive(Debug)]
 pub enum MachineError {
-    DistroErr (distro::DistroError),
-    MenuError (MenuErr),
-    CmdError (command::CommandError),
+    DistroErr (distro::DistroError, u32, &'static str),
+    MenuError (MenuErr, u32, &'static str),
+    CmdError (command::CommandError, u32, &'static str),
 }
 
 /// Implementation of [fmt::Display] for [DistroError]
 impl fmt::Display for MachineError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self {
-            Self::DistroErr(error) => {
-                return write!(f, "Distro not found: {}", error);
+            Self::DistroErr(error, line, file) => {
+                return write!(f, "Distro not found at {line} in {file}: {}", error);
             }
-            Self::MenuError(error) => {
-                return write!(f, "Running the menu failed: {}", error);
+            Self::MenuError(error, line, file) => {
+                return write!(f, "Running the menu failed at {line} in {file}: {}", error);
             }
-            Self::CmdError(error) => {
-                return write!(f, "Running a command failed: {}", error);
+            Self::CmdError(error, line, file) => {
+                return write!(f, "Running a command failed at {line} in {file}: {}", error);
             }
         }
     }
@@ -78,8 +78,8 @@ impl Machine {
                 // Check type of underlying error
                 match error {
                     // This can be returned as is.
-                    distro::DistroError::FileReadError(_) => {
-                        return Err(MachineError::DistroErr(error));
+                    distro::DistroError::FileReadError(..) => {
+                        return Err(MachineError::DistroErr(error, line!(), file!()));
                     }
                     // This needs to be handeled sepereately
                     distro::DistroError::NotSupported => {
@@ -93,7 +93,7 @@ impl Machine {
                                     final_result = transfer_option.expect("The list of transfer methods was empty")
                                 }
                                 Err(error) => {
-                                    return Err(MachineError::MenuError(error));
+                                    return Err(MachineError::MenuError(error, line!(), file!()));
                                 },
                             }
                             final_result
@@ -116,7 +116,7 @@ impl Machine {
         // This is an [Option]
         let display_serv = match menu::menu::print_menu(" Choose a display server ", distro.supported_dsp_serv.to_vec()) {
             Ok(server) => server,
-            Err(error) => return Err(MachineError::MenuError(error))
+            Err(error) => return Err(MachineError::MenuError(error, line!(), file!()))
         };
 
         // Check if list was empty
@@ -137,7 +137,7 @@ impl Machine {
         // Get window manager from user
         let window_manager_opt = match menu::menu::print_menu(" Choose a window manager ", supported_wms) {
             Ok(wm) => wm,
-            Err(error) => return Err(MachineError::MenuError(error))
+            Err(error) => return Err(MachineError::MenuError(error, line!(), file!()))
         };
 
         // Check if list was empty
@@ -152,7 +152,7 @@ impl Machine {
         let transfer = match menu::menu::print_menu(" Choose a method of transfer ", vec![Transfer::None, Transfer::Link, Transfer::Copy]) {
             // This cannot ever panic because the list is not empty
             Ok(transfer_option) => transfer_option.expect("The list of transfer methods was empty"),
-            Err(error) => return Err(MachineError::MenuError(error)),
+            Err(error) => return Err(MachineError::MenuError(error, line!(), file!())),
         };
 
 
@@ -216,7 +216,7 @@ impl Machine {
         match command::cmd("sudo", self.distro.update) {
             Ok(_) => {},
             Err(error) => {
-                return Err(MachineError::CmdError(error));
+                return Err(MachineError::CmdError(error, line!(), file!()));
             },
         }
 
@@ -224,7 +224,7 @@ impl Machine {
         match command::cmd("sudo", self.distro.upgrade) {
             Ok(_) => {},
             Err(error) => {
-                return Err(MachineError::CmdError(error));
+                return Err(MachineError::CmdError(error, line!(), file!()));
             },
         }
 
@@ -236,7 +236,7 @@ impl Machine {
         match command::cmd("sudo", self.all_packages.as_slice()) {
             Ok(_) => {},
             Err(error) => {
-                return Err(MachineError::CmdError(error));
+                return Err(MachineError::CmdError(error, line!(), file!()));
             },
         }
 

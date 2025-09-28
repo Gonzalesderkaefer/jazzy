@@ -11,7 +11,7 @@ use std::{
 /// This enum represesnts an error for this module
 #[derive(Debug)]
 pub enum CommandError {
-    IO (io::Error),
+    IO (io::Error, u32, &'static str),
     CmdFail,
 }
 
@@ -19,8 +19,8 @@ pub enum CommandError {
 impl fmt::Display for CommandError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         match &self {
-            Self::IO (err) => {
-                return write!(f, "Internal IO Error: {}", err);
+            Self::IO (err, line, file) => {
+                return write!(f, "Internal IO Error at {line} in {file}: {}", err);
             },
             CommandError::CmdFail => {
                 return write!(f, "Command failed to execute.");
@@ -51,12 +51,12 @@ pub fn cmd<S: AsRef<OsStr>>(command: S, args: &[S]) -> Result<(), CommandError> 
                     }
                 }
                 Err(e) => {
-                    return Err(CommandError::IO(e));
+                    return Err(CommandError::IO(e, line!(), file!()));
                 }
             }
         },
         Err(e) => {
-            return Err(CommandError::IO(e));
+            return Err(CommandError::IO(e, line!(), file!()));
         },
     }
 }

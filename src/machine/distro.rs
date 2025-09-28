@@ -51,7 +51,7 @@ pub struct Distro {
 /// This is an error type for a Distro
 #[derive(Debug)]
 pub enum DistroError {
-    FileReadError (io::Error),
+    FileReadError (io::Error, u32, &'static str),
     NotSupported,
 }
 
@@ -59,8 +59,8 @@ pub enum DistroError {
 impl fmt::Display for DistroError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self {
-            DistroError::FileReadError(file_util_err) => {
-                return write!(f, "File read error: {}", file_util_err);
+            DistroError::FileReadError(file_util_err, line, file) => {
+                return write!(f, "File read error at {line} in {file}: {}", file_util_err);
             },
             DistroError::NotSupported => {
                 return write!(f, "No supported distro found");
@@ -79,7 +79,7 @@ impl Distro {
         let release_file = match fs::read_to_string("/etc/os-release") {
             Ok(file_contents) => file_contents,
             Err(error) => {
-                return Err(DistroError::FileReadError(error));
+                return Err(DistroError::FileReadError(error, line!(), file!()));
             },
         };
 
