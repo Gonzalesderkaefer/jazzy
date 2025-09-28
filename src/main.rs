@@ -34,19 +34,19 @@ fn run() -> Result<(), JazzyErr>{
     // Get the machine
     let machine = match machine::machine::Machine::get() {
         Ok(mach) => mach,
-        Err(error) => return Err(JazzyErr::MachineErr(error)),
+        Err(error) => return Err(JazzyErr::MachineErr(error, line!(), file!())),
     };
 
     // Update the machine
     match machine.update() {
         Ok(_) => {}
-        Err(error) => return Err(JazzyErr::MachineErr(error)),
+        Err(error) => return Err(JazzyErr::MachineErr(error, line!(), file!())),
     }
 
     // Install the packages
     match machine.install() {
         Ok(_) => {},
-        Err(error) => return Err(JazzyErr::MachineErr(error)),
+        Err(error) => return Err(JazzyErr::MachineErr(error, line!(), file!())),
     }
 
     // move the config files
@@ -59,7 +59,7 @@ fn run() -> Result<(), JazzyErr>{
     for file in cstm::CUSTOMIZED {
         match fu::create_and_write_user(file.0, file.1, file.2) {
             Ok(_) => {},
-            Err(error) => return Err(JazzyErr::FileUtil(error)),
+            Err(error) => return Err(JazzyErr::FileUtil(error, line!(), file!())),
         }
     }
 
@@ -92,7 +92,7 @@ fn run() -> Result<(), JazzyErr>{
 
 /// Moves `src` to `dest` according to `method`. `src`  and `dest` need to be relative to
 /// `home_dir`.
-pub fn movedir<P: AsRef<Path>>(home_dir: &PathBuf, src: P, dest: P, method: &transfer::Transfer) {
+pub fn movedir<P: AsRef<Path>>(home_dir: &PathBuf, src: P, dest: P, method: &transfer::Transfer) -> Result<(), JazzyErr>{
     // Create full src path
     let mut src_path_buf = home_dir.clone();
     src_path_buf.push(src);
@@ -102,8 +102,8 @@ pub fn movedir<P: AsRef<Path>>(home_dir: &PathBuf, src: P, dest: P, method: &tra
     dest_path_buf.push(dest);
 
     match fu::move_dir(src_path_buf, dest_path_buf, method.clone()) {
-        Ok(_) => {},
-        Err(_) => todo!(),
+        Ok(_) => return Ok(()),
+        Err(error) => return Err(JazzyErr::FileUtil(error, line!(), file!())),
     }
 }
 
@@ -117,8 +117,8 @@ pub fn movedir<P: AsRef<Path>>(home_dir: &PathBuf, src: P, dest: P, method: &tra
 #[derive(Debug)]
 pub enum JazzyErr {
     IO (io::Error),
-    MachineErr (machine::machine::MachineError),
-    FileUtil (fu::FileUtilErr),
+    MachineErr (machine::machine::MachineError, u32, &'static str),
+    FileUtil (fu::FileUtilErr, u32, &'static str),
     NoHome (u32, &'static str),
     Command (cmd::CommandError, u32, &'static str)
 }
@@ -128,8 +128,8 @@ impl std::fmt::Display for JazzyErr {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &self {
             JazzyErr::IO(error) => return write!(f, "Internal IO Error at: {error}"),
-            JazzyErr::MachineErr(error) => return write!(f, "Machine Error {error}"),
-            JazzyErr::FileUtil(error) => return write!(f, "File Error: {error}"),
+            JazzyErr::MachineErr(error, line, file) => return write!(f, "Machine Error at {line} in {file} :{error}"),
+            JazzyErr::FileUtil(error, line, file) => return write!(f, "File Error at {line} in {file} : {error}"),
             JazzyErr::NoHome(line, file) => return write!(f, "No $HOME found at: {line}, {file}"),
             JazzyErr::Command(error, line, file) => return write!(f, "Error running command at {line}, {file}: {error}"),
         }
