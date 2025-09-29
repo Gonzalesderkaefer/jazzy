@@ -50,10 +50,10 @@ fn run() -> Result<(), JazzyErr>{
     }
 
     // move the config files
-    movedir(&home_dir, cfg::CFGSRC, cfg::CFGDEST, &machine.transfer)?;
+    movedir(&home_dir, cfg::CFGSRC, cfg::CFGDEST, &machine.transfer, false)?;
 
     // move the scripts
-    movedir(&home_dir, cfg::BINSRC, cfg::BINDEST, &machine.transfer)?;
+    movedir(&home_dir, cfg::BINSRC, cfg::BINDEST, &machine.transfer, false)?;
 
     // Create files
     for file in cstm::CUSTOMIZED {
@@ -92,7 +92,7 @@ fn run() -> Result<(), JazzyErr>{
 
 /// Moves `src` to `dest` according to `method`. `src`  and `dest` need to be relative to
 /// `home_dir`.
-pub fn movedir<P: AsRef<Path>>(home_dir: &PathBuf, src: P, dest: P, method: &transfer::Transfer) -> Result<(), JazzyErr>{
+pub fn movedir<P: AsRef<Path>>(home_dir: &PathBuf, src: P, dest: P, method: &transfer::Transfer, hide: bool) -> Result<(), JazzyErr>{
     // Create full src path
     let mut src_path_buf = home_dir.clone();
     src_path_buf.push(src);
@@ -101,7 +101,7 @@ pub fn movedir<P: AsRef<Path>>(home_dir: &PathBuf, src: P, dest: P, method: &tra
     let mut dest_path_buf = home_dir.clone();
     dest_path_buf.push(dest);
 
-    match fu::move_dir(src_path_buf, dest_path_buf, method.clone()) {
+    match fu::move_dir(src_path_buf, dest_path_buf, method.clone(), hide) {
         Ok(_) => return Ok(()),
         Err(error) => return Err(JazzyErr::FileUtil(error, line!(), file!())),
     }

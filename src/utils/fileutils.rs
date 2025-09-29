@@ -313,7 +313,7 @@ pub fn create_and_write_user<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, conten
 
 /// for each item in `src/` move them to `dest/` where `src/` and `dest/` are directories
 /// if `dest/` does not exist it will be created
-pub fn move_dir<P: AsRef<Path>>(src: P, dest: P, method: Transfer) -> Result<(), FileUtilErr> {
+pub fn move_dir<P: AsRef<Path>>(src: P, dest: P, method: Transfer, hide: bool) -> Result<(), FileUtilErr> {
     // Check if nothing needs to be done
     if let Transfer::None = method {
         return Ok(());
@@ -370,6 +370,11 @@ pub fn move_dir<P: AsRef<Path>>(src: P, dest: P, method: Transfer) -> Result<(),
 
         // Build new destination path
         let mut dest_dir_path = dest.as_ref().to_path_buf();
+
+        // Check if destination should be hidden
+        if hide {
+            dest_dir_path.push(".");
+        }
         dest_dir_path.push(&opened_basename);
 
 
