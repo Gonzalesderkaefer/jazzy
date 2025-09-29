@@ -144,7 +144,7 @@ pub const DEBIAN: distro::Distro = distro::Distro {
     id: DistroId::Debian,
     supported_dsp_serv: &[&XORG, &WAYLAND, &TTY],
     supported_wms: &[&AWESOME_WM, &BSPWM, &I3, &SWAY],
-    install: &["apt", "install", "-y"],
+    install: &["apt", "install", "-y", "--no-install-recommends"],
     install_suffix: None,
     update: &["apt", "update", "-y"],
     upgrade: &["apt", "upgrade", "-y"],

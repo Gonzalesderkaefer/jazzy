@@ -26,7 +26,6 @@ pub const DEB_GUI: &'static[&'static str] = &[
     "network-manager-openconnect-gnome",
     "eom",
     "network-manager-openconnect",
-    /*
     "sddm",
     "libqt6svg6",
     "qt6-virtualkeyboard-plugin",
@@ -34,7 +33,6 @@ pub const DEB_GUI: &'static[&'static str] = &[
     "qml6-module-qtquick-controls",
     "qml6-module-qtquick-effects",
     "libxcb-cursor0",
-    */
 ];
 
 
