@@ -19,6 +19,11 @@ pub static BINSRC: &'static str = "Jazzian/dotfiles/bin/";
 pub static BINDEST: &'static str = ".local/bin/";
 
 
+/// Shell configurations
+pub static SHELLCFG: &'static str = "Jazzian/dotfiles/config/shell/";
+
+
+
 
 /// Enum for the distroid
 #[derive(Debug, Clone, PartialEq)]

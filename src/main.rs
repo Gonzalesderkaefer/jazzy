@@ -30,6 +30,11 @@ fn run() -> Result<(), JazzyErr>{
         None => return Err(JazzyErr::NoHome(line!(), file!())),
     };
 
+    let home_str = match home_dir.to_str() {
+        Some(string) => string,
+        None => return Err(JazzyErr::NoHome(line!(), file!())),
+    };
+
 
     // Get the machine
     let machine = match machine::machine::Machine::get() {
@@ -54,6 +59,10 @@ fn run() -> Result<(), JazzyErr>{
 
     // move the scripts
     movedir(&home_dir, cfg::BINSRC, cfg::BINDEST, &machine.transfer, false)?;
+
+    // move the shell configuratons
+    movedir(&home_dir, cfg::SHELLCFG, home_str, &machine.transfer, true)?;
+
 
     // Create files
     for file in cstm::CUSTOMIZED {
