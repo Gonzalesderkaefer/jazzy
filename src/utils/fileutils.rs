@@ -1,3 +1,4 @@
+use std::ffi::OsString;
 use std::os::unix::fs::PermissionsExt;
 use std::fs::File;
 use std::{path::Path};
@@ -373,9 +374,13 @@ pub fn move_dir<P: AsRef<Path>>(src: P, dest: P, method: Transfer, hide: bool) -
 
         // Check if destination should be hidden
         if hide {
-            dest_dir_path.push(".");
+            let mut hidden = OsString::new();
+            hidden.push(".");
+            hidden.push(opened_basename);
+            dest_dir_path.push(hidden);
+        } else {
+            dest_dir_path.push(opened_basename);
         }
-        dest_dir_path.push(&opened_basename);
 
 
         match method {
