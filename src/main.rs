@@ -92,6 +92,17 @@ fn run() -> Result<(), JazzyErr>{
         Ok(_) => {},
         Err(error) => return Err(JazzyErr::Command(error, line!(), file!())),
     };
+    // Clear the screen
+    print!("{}[2J", 27 as char);
+
+    println!("{}Changing the shell to zsh. You will be prompted for your user password{}",
+        FgColor!(Green), FgColor!());
+
+    match cmd::cmd("chsh", &["-s", "/usr/bin/zsh"]) {
+        Ok(_) => {},
+        Err(error) => return Err(JazzyErr::Command(error, line!(), file!())),
+    };
+
 
 
 
