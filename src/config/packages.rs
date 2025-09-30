@@ -27,10 +27,14 @@ pub const DEB_GUI: &'static[&'static str] = &[
     "eom",
     "network-manager-openconnect",
     "sddm",
+    "polkitd",
 ];
 
 
 pub const DEB_BASE: &'static[&'static str] = &[
+    "xz-utils",
+    "curl",
+    "git",
     "tmux",
     "vifm",
     "zsh",
@@ -141,6 +145,9 @@ pub const FED_GUI: &'static[&'static str] = &[
 
 
 pub const FED_BASE: &'static[&'static str] = &[
+    "xz",
+    "curl",
+    "git",
     "vifm",
     "tmux",
     "zsh",
@@ -259,6 +266,9 @@ pub const ARCH_GUI: &'static[&'static str] = &[
 ];
 
 pub const ARCH_BASE: &'static[&'static str] = &[
+    "xz",
+    "curl",
+    "git",
     "flatpak",
     "fzf",
     "tmux",

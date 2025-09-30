@@ -1,9 +1,14 @@
+use std::ffi::OsStr;
+use std::fs;
+use std::path::Path;
+
 use crate::machine::distro;
 use crate::machine::window_manager as wm;
 use crate::machine::dsp_server as display;
 use super::packages as pkg;
 use super::custom as cstm;
 use crate::utils::fileutils as fu;
+use crate::utils::command as cmd;
 
 
 /// This file defines all constants that are useful for main.rs
@@ -156,9 +161,23 @@ pub const DEBIAN: distro::Distro = distro::Distro {
     packages: pkg::DEB_BASE,
     setup_callback: || {
         // for Rofi
-        let _ = fu::create_and_write_user(".local/bin/mdrun", cstm::DEBMDRUN, 0o755);
-        let _ = fu::create_and_write_user(".local/bin/mdmenu", cstm::DEBMDMENU, 0o755);
+        create_and_write_user(".local/bin/mdrun", cstm::DEBMDRUN, 0o755);
+        create_and_write_user(".local/bin/mdmenu", cstm::DEBMDMENU, 0o755);
 
+        // create the font directory
+        if let Some(mut home) = std::env::home_dir() {
+            // Create the full dir to font dir
+            home.push(".local/share/fonts");
+            if let Ok(_) = fs::create_dir_all(&home) {
+                // Download the nerdfont
+                cmd("curl", &["-OL", "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.tar.xz"]);
+
+                // extract the archives
+                if let Some(home_str) = home.to_str() {
+                    cmd("tar", &["xJvf", "JetBrainsMono.tar.xz", "-C", home_str]);
+                }
+            }
+        }
     },
 };
 
@@ -173,9 +192,24 @@ pub const FEDORA: distro::Distro = distro::Distro {
     packages: pkg::FED_BASE,
     setup_callback: || {
         // for Rofi
-        let _ = fu::create_and_write_user(".local/bin/mdrun", cstm::MDRUN_CONTENT, 0o755);
-        let _ = fu::create_and_write_user(".local/bin/mdmenu", cstm::MDMENU_CONTENT, 0o755);
+        create_and_write_user(".local/bin/mdrun", cstm::MDRUN_CONTENT, 0o755);
+        create_and_write_user(".local/bin/mdmenu", cstm::MDMENU_CONTENT, 0o755);
 
+
+        // Create the font directory
+        if let Some(mut home) = std::env::home_dir() {
+            // Create the full dir to font dir
+            home.push(".local/share/fonts");
+            if let Ok(_) = fs::create_dir_all(&home) {
+                // Download the nerdfont
+                cmd("curl", &["-OL", "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.tar.xz"]);
+
+                // extract the archives
+                if let Some(home_str) = home.to_str() {
+                    cmd("tar", &["xJvf", "JetBrainsMono.tar.xz", "-C", home_str]);
+                }
+            }
+        }
     },
 };
 
@@ -190,8 +224,8 @@ pub const ARCH_LINUX: distro::Distro = distro::Distro {
     packages: pkg::ARCH_BASE,
     setup_callback: || {
         // for Rofi
-        let _ = fu::create_and_write_user(".local/bin/mdrun", cstm::MDRUN_CONTENT, 0o755);
-        let _ = fu::create_and_write_user(".local/bin/mdmenu", cstm::MDMENU_CONTENT, 0o755);
+        create_and_write_user(".local/bin/mdrun", cstm::MDRUN_CONTENT, 0o755);
+        create_and_write_user(".local/bin/mdmenu", cstm::MDMENU_CONTENT, 0o755);
 
     },
 };
@@ -215,3 +249,24 @@ pub const DISTRO_ASSOC: &'static [(&distro::Distro /* Distro */, &'static str /*
     (&FEDORA, "Fedora"),
     (&ARCH_LINUX, "Arch Linux"),
 ];
+
+
+
+
+// Helper functions.
+// These will just print an error to stdout and return nothing
+fn cmd<S: AsRef<OsStr>>(command: S, args: &[S]) {
+    match cmd::cmd(command, args) {
+        Ok(_) => {},
+        Err(error) => println!("Failed to run a command in {} : {error}", file!())
+    }
+}
+
+fn create_and_write_user<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, contents: C, mode: u32) {
+    match fu::create_and_write_user(new_file, contents, mode) {
+        Ok(_) => {}
+        Err(error) => println!("Failed to create file: {error}"),
+    }
+
+}
+
