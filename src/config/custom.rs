@@ -2,10 +2,6 @@
 /// for custom configuration that is specific for each device
 
 /// Predifined file contents
-#[allow(unused)]
-pub static CUSTOMIZED_SH: &'static str = "killshells() { pkill -KILL -u $USER -t tty1 }\n\
-    [ \"$(tty)\" = \"/dev/tty1\" ] && exec startx\n";
-
 pub static DEBMDMENU: &'static str = "#!/usr/bin/sh\n\
                   if [ $XDG_SESSION_TYPE = \"wayland\" ]; then\n\
                       exec wofi_dmenu;\n\
@@ -60,7 +56,7 @@ pub static CUSTOMIZED: &'static [(&str, &str, u32)] =
 
 
     // Customized shell files
-    (".customized.sh", CUSTOMIZED_SH, 0o644),
+    (".customized.sh", "", 0o644),
     (".customrc", "", 0o644),
     (".customenv",  "export BROWSER_PREFIX=\"firefox\"", 0o644),
 
