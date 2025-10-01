@@ -255,17 +255,17 @@ pub const DISTRO_ASSOC: &'static [(&distro::Distro /* Distro */, &'static str /*
 
 // Helper functions.
 // These will just print an error to stdout and return nothing
-fn cmd<S: AsRef<OsStr>>(command: S, args: &[S]) {
-    match cmd::cmd(command, args) {
+fn cmd<S: AsRef<OsStr> + Clone>(command: S, args: &[S]) {
+    match cmd::cmd(command.clone(), args) {
         Ok(_) => {},
-        Err(error) => println!("Failed to run a command in {} : {error}", file!())
+        Err(error) => println!("Failed to run {} in {} : {error}", command.as_ref().display(), file!())
     }
 }
 
-fn create_and_write_user<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, contents: C, mode: u32) {
-    match fu::create_and_write_user(new_file, contents, mode) {
+fn create_and_write_user<P: AsRef<Path> + Clone, C: AsRef<[u8]>>(new_file: P, contents: C, mode: u32) {
+    match fu::create_and_write_user(new_file.clone(), contents, mode) {
         Ok(_) => {}
-        Err(error) => println!("Failed to create file: {error}"),
+        Err(error) => println!("Failed to create file {}: {error}", new_file.as_ref().display()),
     }
 
 }

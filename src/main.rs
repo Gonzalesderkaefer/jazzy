@@ -7,13 +7,13 @@ mod utils;
 
 
 
-use std::{env::home_dir, io, path::{Path, PathBuf}, result};
+use std::{env::home_dir, ffi::OsStr, io, path::{Path, PathBuf}, result};
 use utils::fileutils as fu;
 use machine::transfer;
 use config::config as cfg;
 use config::custom as cstm;
 
-use crate::utils::command as cmd;
+use crate::{machine::dsp_server, utils::command as cmd};
 
 fn main() {
     match run() {
@@ -80,29 +80,28 @@ fn run() -> Result<(), JazzyErr>{
     // Run final commands
 
     // Gsettings stuff for theming
-    match cmd::cmd("gsettings", &["set", "org.gnome.desktop.interface", "gtk-theme", "\'Adwaita-dark\'"]) {
-        Ok(_) => {},
-        Err(error) => return Err(JazzyErr::Command(error, line!(), file!())),
-    };
-    match cmd::cmd("gsettings", &["set", "org.gnome.desktop.interface", "color-scheme", "\'prefer-dark\'"]) {
-        Ok(_) => {},
-        Err(error) => return Err(JazzyErr::Command(error, line!(), file!())),
-    };
-    match cmd::cmd("gsettings", &["set", "org.gnome.desktop.interface", "icon-theme", "\'Papirus-Dark\'"]) {
-        Ok(_) => {},
-        Err(error) => return Err(JazzyErr::Command(error, line!(), file!())),
-    };
+    cmd("gsettings", &["set", "org.gnome.desktop.interface", "gtk-theme", "\'Adwaita-dark\'"]);
+    cmd("gsettings", &["set", "org.gnome.desktop.interface", "color-scheme", "\'prefer-dark\'"]);
+    cmd("gsettings", &["set", "org.gnome.desktop.interface", "icon-theme", "\'Papirus-Dark\'"]);
+
+
     // Clear the screen
     print!("{}[2J", 27 as char);
 
+
+    // Change the shell
     println!("{}Changing the shell to zsh. You will be prompted for your user password{}",
         FgColor!(Green), FgColor!());
+    cmd("chsh", &["-s", "/usr/bin/zsh"]);
 
-    match cmd::cmd("chsh", &["-s", "/usr/bin/zsh"]) {
-        Ok(_) => {},
-        Err(error) => return Err(JazzyErr::Command(error, line!(), file!())),
-    };
 
+    // Enable display server
+    match machine.display_server.id {
+        cfg::DspServerId::Tty => {},
+        _ => {
+            cmd("sudo", &["systemctl", "enable", "sddm"]);
+        }
+    }
 
 
 
@@ -157,7 +156,24 @@ impl std::fmt::Display for JazzyErr {
 }
 
 
+// Helper functions.
+// These will just print an error to stdout and return nothing
+fn cmd<S: AsRef<OsStr> + Clone>(command: S, args: &[S]) {
+    match cmd::cmd(command.clone(), args) {
+        Ok(_) => {},
+        Err(error) => println!("Failed to run {} in {} : {error}", command.as_ref().display(), file!())
+    }
+}
 
+/*
+fn create_and_write_user<P: AsRef<Path> + Clone, C: AsRef<[u8]>>(new_file: P, contents: C, mode: u32) {
+    match fu::create_and_write_user(new_file.clone(), contents, mode) {
+        Ok(_) => {}
+        Err(error) => println!("Failed to create file {}: {error}", new_file.as_ref().display()),
+    }
+
+}
+*/
 
 
 

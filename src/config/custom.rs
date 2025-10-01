@@ -32,7 +32,6 @@ pub static MYTERM_CONTENT: &'static str = "#!/bin/sh\n\
                                ;;\n\
                        esac\n";
 
-pub static STARTX_CONTENT: &'static str = "x11startup &\nexec i3\n";
 
 pub static X11STARTUP: &'static str = "#!/usr/bin/bash\n";
 
@@ -54,24 +53,16 @@ pub static CUSTOMIZED: &'static [(&str, &str, u32)] =
     (".config/river/customized/customized", "", 0o644),
     (".config/niri/customized/customized.kdl", "", 0o644),
 
-
     // Customized shell files
     (".customized.sh", "", 0o644),
     (".customrc", "", 0o644),
     (".customenv",  "export BROWSER_PREFIX=\"firefox\"", 0o644),
 
-
     // X11 Startup
     (".local/bin/x11startup", X11STARTUP, 0o755),
 
-
-    // Xinitrc
-    (".xinitrc", STARTX_CONTENT, 0o644),
-
-
     // Myterm
     (".local/bin/myterm", MYTERM_CONTENT, 0o755),
-
 
     // GTK3
     (".config/gtk-3.0/settings.ini", GTK3_CONFIG, 0o644),
