@@ -24,6 +24,7 @@ pub enum FileUtilErr {
     // create_file_and_write_user
     NoHome (u32, &'static str),
 
+
 }
 impl fmt::Display for FileUtilErr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
@@ -301,7 +302,55 @@ pub fn create_and_write_user<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, conten
 
 
 
+/// Get all files that are in this directory
+pub fn sub_paths<P: AsRef<Path>>(directory: P, paths: &mut Vec<String>) -> Result<(), FileUtilErr>{
+    // Check if the directory exists
+    if ! directory.as_ref().exists() {
+        match directory.as_ref().to_str() {
+            Some(directory_name) => return Err(FileUtilErr::NoSource(String::from(directory_name), line!(), file!())),
+            None => todo!(), // I don't know, what to do here
+        }
+    }
 
+    // Read directory
+    let read_directory = match fs::read_dir(directory) {
+        Ok(read_dir) => read_dir,
+        Err(error) => return Err(FileUtilErr::IO(error, line!(), file!())),
+    };
+
+    for entry in read_directory {
+        // Open directory entry as entry
+        let opened_entry = match entry {
+            Ok(entry) => entry,
+            Err(e) => { 
+                return Err(FileUtilErr::IO(e, line!(), file!())); 
+            },
+        };
+
+        // Add entry to paths
+        match opened_entry.path().to_str() {
+            Some(full_path) => paths.push(String::from(full_path)),
+            None => {},
+        }
+
+        // Get the file_type of the opened_entry
+        let opened_file_type = match opened_entry.file_type() {
+            Ok (file_type) => file_type,
+            Err(e) => {
+                return Err(FileUtilErr::IO(e, line!(), file!()));
+            },
+        };
+
+        // See if opened element is a directory then call recursively
+        if opened_file_type.is_dir() {
+            match sub_paths(opened_entry.path(), paths) {
+                Ok(_) => {},
+                Err(error) => return Err(error),
+            }
+        };
+    }
+    return Ok(());
+}
 
 
 
