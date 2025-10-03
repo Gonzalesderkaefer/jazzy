@@ -257,7 +257,15 @@ pub fn create_and_write_user<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, conten
 
     // Check if new_file already exists
     if full_path.as_path().exists() {
-        return Ok(());
+        // Create new backup path for the file
+        let mut backup_path = full_path.clone();
+        backup_path.push(".bac");
+
+        // Move the file
+        match fs::rename(&full_path, backup_path) {
+            Ok(_) => {},
+            Err(error) => return Err(FileUtilErr::IO(error, line!(), file!()))
+        }
     }
 
     // Check if path is a directory
