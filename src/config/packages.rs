@@ -52,7 +52,6 @@ pub const DEB_BASE: &'static[&'static str] = &[
 pub const _DEB_XORG: &'static[&'static str] = &[
     "lxappearance",
     "maim",
-    "rofi",
     "arandr",
     "rofi",
     "xclip",
@@ -185,7 +184,6 @@ pub const _FED_WAY: &'static[&'static str] = &[
     "swaybg",
     "swayidle",
     "waybar",
-    "wofi",
     "wl-clipboard",
     "swaylock",
     "mako",
@@ -305,7 +303,6 @@ pub const ARCH_XORG: &'static[&'static str] = crate::concat_packages!(&[&str]: A
 
 pub const _ARCH_WAY: &'static[&'static str] = &[
     "grim",
-    "wofi",
     "swaybg",
     "waybar",
     "swayidle",
