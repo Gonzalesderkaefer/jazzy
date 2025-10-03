@@ -48,6 +48,9 @@ pub fn print_menu<'a, Q: Into<ListItem<'a>> + Clone>(prompt: &'a str, choices: V
         return Ok(None);
     }
 
+    // Clear the screen. This is needed for the tty stuff
+    print!("{}[2J", 27 as char);
+
     // Initialize a Terminal to print stuff to
     let mut terminal = ratatui::init();
 
@@ -58,6 +61,9 @@ pub fn print_menu<'a, Q: Into<ListItem<'a>> + Clone>(prompt: &'a str, choices: V
 
     // This is so that the terminal doesn't look weird 
     ratatui::restore();
+
+    // Clear the screen. This is needed for the tty stuff
+    print!("{}[2J", 27 as char);
 
     // Check if running the screen was successful
     match menu_result {
