@@ -68,7 +68,7 @@ fn run() -> Result<(), JazzyErr>{
     for file in cstm::CUSTOMIZED {
         match fu::create_and_write_user(file.0, file.1, file.2) {
             Ok(_) => {},
-            Err(error) => return Err(JazzyErr::FileUtil(error, line!(), file!())),
+            Err(error) => println!("Error creating file {}: {error}", file.0),
         }
     }
 

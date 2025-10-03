@@ -1,7 +1,7 @@
 use std::ffi::OsString;
 use std::os::unix::fs::PermissionsExt;
 use std::fs::File;
-use std::{path::Path};
+use std::{path::{Path, PathBuf}};
 use std::error::Error;
 use std::{fs, io, fmt};
 
@@ -258,8 +258,9 @@ pub fn create_and_write_user<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, conten
     // Check if new_file already exists
     if full_path.as_path().exists() {
         // Create new backup path for the file
-        let mut backup_path = full_path.clone();
-        backup_path.push(".bac");
+        let mut backup_path_os_string = full_path.clone().into_os_string();
+        backup_path_os_string.push(".bac");
+        let backup_path = PathBuf::from(backup_path_os_string);
 
         // Move the file
         match fs::rename(&full_path, backup_path) {
@@ -311,6 +312,7 @@ pub fn create_and_write_user<P: AsRef<Path>, C: AsRef<[u8]>>(new_file: P, conten
 
 
 /// Get all files that are in this directory
+#[allow(dead_code)]
 pub fn sub_paths<P: AsRef<Path>>(directory: P, paths: &mut Vec<String>) -> Result<(), FileUtilErr>{
     // Check if the directory exists
     if ! directory.as_ref().exists() {
