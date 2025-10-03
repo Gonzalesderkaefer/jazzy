@@ -28,6 +28,8 @@ pub const DEB_GUI: &'static[&'static str] = &[
     "network-manager-openconnect",
     "sddm",
     "polkitd",
+    "wireplumber",
+    "rtkit",
 ];
 
 
